@@ -9,7 +9,11 @@ const Button = (props) =>
 const StatisticLine = (props) => {
   const {text, value} = props
   return (
-    <div>{text} {value}</div>
+    <tr>
+      <td>{text}</td>
+      <td>{value}</td>
+    </tr>
+    
   )
 }
 
@@ -32,12 +36,17 @@ const Statistics = (props) => {
   }
   return (
     <div>
-      <StatisticLine text='good' value={good}></StatisticLine>
-      <StatisticLine text='neutral' value={neutral}></StatisticLine>
-      <StatisticLine text='all' value={all}></StatisticLine>
-      <StatisticLine text='bad' value={bad}></StatisticLine>
-      <StatisticLine text='average' value={average()}></StatisticLine>
-      <StatisticLine text='positive' value={positive()}></StatisticLine>
+      <table>
+        <tbody>
+          <StatisticLine text='good' value={good}></StatisticLine>
+          <StatisticLine text='neutral' value={neutral}></StatisticLine>
+          <StatisticLine text='all' value={all}></StatisticLine>
+          <StatisticLine text='bad' value={bad}></StatisticLine>
+          <StatisticLine text='average' value={average()}></StatisticLine>
+          <StatisticLine text='positive' value={positive()}></StatisticLine>
+        </tbody>
+      </table>
+      
     </div>
   )
 }
@@ -50,17 +59,14 @@ const App = () => {
   const [all, setAll] = useState(0)
 
   const onGood = () => {
-    console.log("good value: ", good)
     setGood(good + 1)
     setAll(all + 1)
   }
   const onNeutral = () => {
-    console.log("neutral value: ", neutral)
     setNeutral(neutral + 1)
     setAll(all + 1)
   }
   const onBad = () => {
-    console.log("bad value: ", bad)
     setBad(bad + 1)
     setAll(all + 1)
   }
