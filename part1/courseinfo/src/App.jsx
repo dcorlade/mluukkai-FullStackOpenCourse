@@ -1,62 +1,40 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 
-const Header = ( { name }) => {
-  console.log(name)
-  return (<h1>{name}</h1>)
-}
-
-const Part = ({ part, exercises })  => {
-  return (
-    <p>
-      {part} {exercises}
-    </p>
+const Button = (props) =>  
+  (
+    <button onClick={props.onHandle}>{props.text}</button>
   )
-}
-
-const Content = ({ parts }) => {
-  console.log(parts)
-  return (
-    <div>
-      <Part part={parts[0].name} exercises={parts[0].exercises} />
-      <Part part={parts[1].name} exercises={parts[1].exercises} />
-      <Part part={parts[2].name} exercises={parts[2].exercises} />
-    </div>
-  )
-}
-
-const Total = ({ parts }) => {
-  const total = parts[0].exercises + parts[1].exercises + parts[2].exercises
-  return <p>Number of exercises {total}</p>
-}
-
 
 
 const App = () => {
-  const course = {
-    name: 'Half Stack application development',
-    parts: [
-      {
-        name: 'Fundamentals of React',
-        exercises: 10
-      },
-      {
-        name: 'Using props to pass data',
-        exercises: 7
-      },
-      {
-        name: 'State of a component',
-        exercises: 14
-      }
-    ]
+  // save clicks of each button to its own state
+  const [good, setGood] = useState(0)
+  const [neutral, setNeutral] = useState(0)
+  const [bad, setBad] = useState(0)
+
+  const onGood = () => {
+    console.log("good value: ", good)
+    setGood(good + 1)
+  }
+  const onNeutral = () => {
+    console.log("neutral value: ", neutral)
+    setNeutral(neutral + 1)
+  }
+  const onBad = (vlue) => {
+    console.log("bad value: ", bad)
+    setBad(bad + 1)
   }
 
   return (
     <div>
-      <Header name={course.name} />
-      <Content parts={course.parts} />
-      <Total parts={course.parts} />
+      <h1>give feedback</h1>
+      <Button onHandle={onGood} text={'good'}></Button>
+      <Button onHandle={onNeutral} text={'neutral'}></Button>
+      <Button onHandle={onBad} text={'bad'}></Button>
+      <h1>statistics</h1>
+      <div>good {good}</div>
+      <div>neutral {neutral}</div>
+      <div>bad {bad}</div>
     </div>
   )
 }
