@@ -1,78 +1,62 @@
 import { useState } from 'react'
+import reactLogo from './assets/react.svg'
+import viteLogo from '/vite.svg'
 
-const Button = (props) =>  
-  (
-    <button onClick={props.onHandle}>{props.text}</button>
-  )
+const Header = ( { name }) => {
+  console.log(name)
+  return (<h1>{name}</h1>)
+}
 
-  
-const StatisticLine = (props) => {
-  const {text, value} = props
+const Part = ({ part, exercises })  => {
   return (
-    <div>{text} {value}</div>
+    <p>
+      {part} {exercises}
+    </p>
   )
 }
 
-
-// a proper place to define a component
-const Statistics = (props) => {
-  const {good, bad, all, neutral} = props
-  const average = () => {
-    return (good - bad) / all
-  }
-
-  const positive = () => {
-    return good / all * 100
-  }
-
-  if (all == 0) {
-    return (
-      <div>No feedback given</div>
-    )
-  }
+const Content = ({ parts }) => {
+  console.log(parts)
   return (
     <div>
-      <StatisticLine text='good' value={good}></StatisticLine>
-      <StatisticLine text='neutral' value={neutral}></StatisticLine>
-      <StatisticLine text='all' value={all}></StatisticLine>
-      <StatisticLine text='bad' value={bad}></StatisticLine>
-      <StatisticLine text='average' value={average()}></StatisticLine>
-      <StatisticLine text='positive' value={positive()}></StatisticLine>
+      <Part part={parts[0].name} exercises={parts[0].exercises} />
+      <Part part={parts[1].name} exercises={parts[1].exercises} />
+      <Part part={parts[2].name} exercises={parts[2].exercises} />
     </div>
   )
 }
 
-const App = () => {
-  // save clicks of each button to its own state
-  const [good, setGood] = useState(0)
-  const [neutral, setNeutral] = useState(0)
-  const [bad, setBad] = useState(0)
-  const [all, setAll] = useState(0)
+const Total = ({ parts }) => {
+  const total = parts[0].exercises + parts[1].exercises + parts[2].exercises
+  return <p>Number of exercises {total}</p>
+}
 
-  const onGood = () => {
-    console.log("good value: ", good)
-    setGood(good + 1)
-    setAll(all + 1)
-  }
-  const onNeutral = () => {
-    console.log("neutral value: ", neutral)
-    setNeutral(neutral + 1)
-    setAll(all + 1)
-  }
-  const onBad = () => {
-    console.log("bad value: ", bad)
-    setBad(bad + 1)
-    setAll(all + 1)
+
+
+const App = () => {
+  const course = {
+    name: 'Half Stack application development',
+    parts: [
+      {
+        name: 'Fundamentals of React',
+        exercises: 10
+      },
+      {
+        name: 'Using props to pass data',
+        exercises: 7
+      },
+      {
+        name: 'State of a component',
+        exercises: 14
+      }
+    ]
   }
 
   return (
     <div>
-      <h1>give feedback</h1>
-      <Button onHandle={onGood} text={'good'}></Button>
-      <Button onHandle={onNeutral} text={'neutral'}></Button>
-      <Button onHandle={onBad} text={'bad'}></Button>
-      <h1>statistics</h1>
-      <Statistics good={good} bad={bad} all={all} neutral={neutral}></Statistics>
+      <Header name={course.name} />
+      <Content parts={course.parts} />
+      <Total parts={course.parts} />
     </div>
   )
 }
