@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
+import personService from './services/persons'
 
 const App = () => {
   const [persons, setPersons] = useState([]) 
@@ -8,13 +9,9 @@ const App = () => {
   const [newFilter, setNewFilter] = useState('')
 
   useEffect(() => {
-    console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log('promise fulfilled')
-        setPersons(response.data)
-      })
+    personService.getAll().then(initialPersons => {
+      setPersons(initialPersons)
+    })
   }, [])
 
   const handleNameChange = (event) => {
@@ -31,6 +28,25 @@ const App = () => {
 
   const personNames = persons.map(person => person.name)
 
+  const deletePerson = (id) => {
+    
+    const personToDelete = persons.find(person => person.id === id)
+    console.log("deleting " + id)
+    if (confirm(`Delete ${personToDelete.name} ?`)) {
+      personService.remove(id, personToDelete)
+        .then(returnedPersons => {
+          console.log("returning: ", returnedPersons)
+          const newPersons = persons.filter(person => person.id != id)
+          setPersons(newPersons)
+        }) 
+      console.log('Person was deleted.');
+    } else {
+      // Do nothing!
+      console.log('Person wasn\'t deleted.');
+    }
+    
+  }
+
   const addPerson = (event) => {
     event.preventDefault()
     const nameObj = {
@@ -43,7 +59,13 @@ const App = () => {
       alert(`${newName} is already added to the phonebook`)
       return
     }
-    setPersons(persons.concat(nameObj))
+
+    personService.create(nameObj).then(returnedPerson => {
+      setPersons(persons.concat(returnedPerson))
+      setNewName('')
+      setNewPhone('')
+    })
+    
     console.log("clicked button");
   }
 
@@ -81,7 +103,12 @@ const App = () => {
           :
           persons
         ).map(person =>
-          <li key={person.name}>{person.name} {person.number}</li>
+          <div key={person.name}>
+            
+            <li>{person.name} {person.number}</li>
+            <button onClick={() => deletePerson(person.id)}>delete</button>
+          </div>
+          
         )}
     </div>
   )
