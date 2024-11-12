@@ -1,12 +1,15 @@
+// @ts-nocheck
 import { useEffect, useState } from 'react'
-import axios from 'axios'
 import personService from './services/persons'
+import Notification from './components/Notifcation'
+
 
 const App = () => {
   const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newPhone, setNewPhone] = useState('')
   const [newFilter, setNewFilter] = useState('')
+  const [notifMessage, setNotifMessage] = useState(null)
 
   useEffect(() => {
     personService.getAll().then(initialPersons => {
@@ -38,7 +41,16 @@ const App = () => {
           console.log("returning: ", returnedPersons)
           const newPersons = persons.filter(person => person.id != id)
           setPersons(newPersons)
-        }) 
+        })
+        .catch(err => {
+          setNotifMessage(`Information of ${personToDelete.name} was already deleted from server `)
+          setTimeout(() => {
+            setNotifMessage(null);
+          }, 5000);
+          setPersons(persons.filter(person => person.id !== id))
+
+        }
+        )
       console.log('Person was deleted.');
     } else {
       // Do nothing!
@@ -67,12 +79,20 @@ const App = () => {
     })
     
     console.log("clicked button");
+
+    setNotifMessage(
+      `Added '${nameObj.name}'`
+    )
+    setTimeout(() => {
+      setNotifMessage(null)
+    }, 5000)
   }
 
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={notifMessage} type={notifMessage && notifMessage.includes('deleted') ? 'error' : 'success'} />
       <form >
         <label>filter on name:</label>
         <input
