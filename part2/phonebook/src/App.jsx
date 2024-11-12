@@ -2,7 +2,9 @@
 import { useEffect, useState } from 'react'
 import personService from './services/persons'
 import Notification from './components/Notifcation'
-
+import Person from './components/Person'
+import Filter from './components/Filter'
+import AddPerson from './components/AddPerson'
 
 const App = () => {
   const [persons, setPersons] = useState([]) 
@@ -93,29 +95,16 @@ const App = () => {
     <div>
       <h2>Phonebook</h2>
       <Notification message={notifMessage} type={notifMessage && notifMessage.includes('deleted') ? 'error' : 'success'} />
-      <form >
-        <label>filter on name:</label>
-        <input
-          value={newFilter}
-          onChange={handleFilterChange}
-        />
-      </form> 
+      <Filter newFilter={newFilter} handleFilterChange={handleFilterChange} />
+
       <br></br>
-      <form onSubmit={addPerson}>
-        <label>name: </label>
-        <input
-          value={newName}
-          onChange={handleNameChange}
-        />
-        <br></br>
-        <label>phone: </label>
-        <input
-          value={newPhone}
-          onChange={handlePhoneChange}
-        />
-        <br></br>
-        <button type="submit">add</button>
-      </form> 
+      <AddPerson 
+        newName={newName} 
+        newPhone={newPhone} 
+        handleNameChange={handleNameChange} 
+        handlePhoneChange={handlePhoneChange} 
+        addPerson={addPerson} 
+      />
       <h2>Numbers</h2>
       
         {(newFilter ? 
@@ -123,12 +112,7 @@ const App = () => {
           :
           persons
         ).map(person =>
-          <div key={person.name}>
-            
-            <li>{person.name} {person.number}</li>
-            <button onClick={() => deletePerson(person.id)}>delete</button>
-          </div>
-          
+          <Person key={person.id} person={person} deletePerson={deletePerson} />
         )}
     </div>
   )
