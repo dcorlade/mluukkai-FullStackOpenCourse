@@ -69,11 +69,19 @@ const App = () => {
     }
     
     if (personNames.includes(nameObj.name)) {
-      console.log("added")
+      console.log("name is already added")
       alert(`${nameObj.name} is already added to the phonebook, the number will be updated`)
+      
       const personToUpdate = persons.find(person => person.name === nameObj.name)
-      personService.update(personToUpdate.id).then(person => {
+      personService.update(personToUpdate.id)
+      .then(person => {
         setPersons(persons.map(n => n.id === personToUpdate.id ? person : n))
+      })
+      .catch(error => {
+        alert(
+          `the person '${personToUpdate.name}' was already deleted from server`
+        )
+        setPersons(persons.filter(n => n.id !== id))
       })
     }
 
