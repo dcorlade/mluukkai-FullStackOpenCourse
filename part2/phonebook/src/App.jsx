@@ -83,6 +83,7 @@ const App = () => {
         )
         setPersons(persons.filter(n => n.id !== id))
       })
+      return
     }
 
     personService.create(nameObj).then(returnedPerson => {
