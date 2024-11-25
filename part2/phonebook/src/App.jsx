@@ -63,17 +63,16 @@ const App = () => {
 
   const addPerson = (event) => {
     event.preventDefault()
-    const nameObj = {
+    const newObj = {
       name: newName,
       number: newPhone
     }
     
-    if (personNames.includes(nameObj.name)) {
-      console.log("name is already added")
-      alert(`${nameObj.name} is already added to the phonebook, the number will be updated`)
+    if (personNames.includes(newObj.name)) {
+      alert(`${newObj.name} is already added to the phonebook, the number will be updated`)
       
-      const personToUpdate = persons.find(person => person.name === nameObj.name)
-      personService.update(personToUpdate.id)
+      const personToUpdate = persons.find(person => person.name === newObj.name)
+      personService.update(personToUpdate.id, newObj)
       .then(person => {
         setPersons(persons.map(n => n.id === personToUpdate.id ? person : n))
       })
@@ -86,7 +85,7 @@ const App = () => {
       return
     }
 
-    personService.create(nameObj).then(returnedPerson => {
+    personService.create(newObj).then(returnedPerson => {
       setPersons(persons.concat(returnedPerson))
       setNewName('')
       setNewPhone('')
@@ -95,7 +94,7 @@ const App = () => {
     console.log("clicked button");
 
     setNotifMessage(
-      `Added '${nameObj.name}'`
+      `Added '${newObj.name}'`
     )
     setTimeout(() => {
       setNotifMessage(null)
