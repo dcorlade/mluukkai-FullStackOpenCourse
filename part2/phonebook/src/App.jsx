@@ -38,7 +38,7 @@ const App = () => {
     const personToDelete = persons.find(person => person.id === id)
     console.log("deleting " + id)
     if (confirm(`Delete ${personToDelete.name} ?`)) {
-      personService.remove(id, personToDelete)
+      personService.remove(id)
         .then(returnedPersons => {
           console.log("returning: ", returnedPersons)
           const newPersons = persons.filter(person => person.id != id)
@@ -70,8 +70,11 @@ const App = () => {
     
     if (personNames.includes(nameObj.name)) {
       console.log("added")
-      alert(`${newName} is already added to the phonebook`)
-      return
+      alert(`${nameObj.name} is already added to the phonebook, the number will be updated`)
+      const personToUpdate = persons.find(person => person.name === nameObj.name)
+      personService.update(personToUpdate.id).then(person => {
+        setPersons(persons.map(n => n.id === personToUpdate.id ? person : n))
+      })
     }
 
     personService.create(nameObj).then(returnedPerson => {
