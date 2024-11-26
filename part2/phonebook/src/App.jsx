@@ -90,6 +90,13 @@ const App = () => {
       setNewName('')
       setNewPhone('')
     })
+    .catch(error => {
+      setNotifMessage(`${error.response.data.error}`)
+      setTimeout(() => {
+        setNotifMessage(null);
+      }, 5000);
+      console.log(error.response.data.error)
+    })
     
     console.log("clicked button");
 
@@ -105,7 +112,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={notifMessage} type={notifMessage && notifMessage.includes('deleted') ? 'error' : 'success'} />
+      <Notification message={notifMessage} type={notifMessage && (notifMessage.includes('deleted') || notifMessage.includes('failed')) ? 'error' : 'success'} />
       <Filter newFilter={newFilter} handleFilterChange={handleFilterChange} />
 
       <br></br>
