@@ -44,7 +44,7 @@ const App = () => {
           const newPersons = persons.filter(person => person.id != id)
           setPersons(newPersons)
         })
-        .catch(err => {
+        .catch(() => {
           setNotifMessage(`Information of ${personToDelete.name} was already deleted from server `)
           setTimeout(() => {
             setNotifMessage(null);
@@ -76,11 +76,11 @@ const App = () => {
       .then(person => {
         setPersons(persons.map(n => n.id === personToUpdate.id ? person : n))
       })
-      .catch(error => {
+      .catch(() => {
         alert(
           `the person '${personToUpdate.name}' was already deleted from server`
         )
-        setPersons(persons.filter(n => n.id !== id))
+        setPersons(persons.filter(n => n.id !== personToUpdate.id))
       })
       return
     }
