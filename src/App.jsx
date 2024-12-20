@@ -2,13 +2,19 @@ import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
-
+import AddBlog from './components/AddBlog'
+import Notification from './components/Notification'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+  const [newBlog, setNewBlog] = useState('')
+  const [newAuthor, setNewAuthor] = useState('')
+  const [newUrl, setNewUrl] = useState('')
+  const [notifMessage, setNotifMessage] = useState(null)
+  const [notifType, setNotifType] = useState('')
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -24,6 +30,15 @@ const App = () => {
       blogService.setToken(user.token)
     }
   }, [])
+
+  const showNotification = (message, type) => {
+    setNotifMessage(message)
+    setNotifType(type)
+    setTimeout(() => {
+      setNotifMessage(null)
+      setNotifType('')
+    }, 5000)
+  }
 
   const loginForm = () => (
     <form onSubmit={handleLogin}>
@@ -57,12 +72,6 @@ const App = () => {
         </p>
         <button type="submit" style={{ display: 'inline' }}>logout</button>
       </form>
-      <div>
-        <h2>blogs</h2>
-        {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} />
-        )}
-      </div>
     </div>
   )
 
@@ -82,10 +91,10 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
-    } catch (exception) {
-      setTimeout(() => {
-        console.log('Wrong credentials')
-      }, 5000)
+      showNotification('Logged in successfully', 'success')
+    } catch (err) {
+      console.log(err)
+      showNotification('Failed to login: incorrect username or password', 'error')
     }
   }
 
@@ -93,29 +102,69 @@ const App = () => {
     event.preventDefault()
 
     try {
-      console.log('Logging out')
-
       window.localStorage.removeItem('loggedBlogappUser')
 
       setUser(null)
       setUsername('')
       setPassword('')
-    } catch (exception) {
-      setTimeout(() => {
-        console.log('Unable to logout')
-      }, 5000)
+      showNotification('Logged out successfully', 'success')
+    } catch (err) {
+      console.log(err)
+      showNotification('Failed to logout', 'error')
     }
+  }
+
+  const addBlog = (event) => {
+    event.preventDefault()
+    const blogObject = {
+      title: newBlog,
+      author: newAuthor,
+      url: newUrl,
+      likes: 0
+    }
+    blogService
+      .create(blogObject)
+      .then(returnedBlog => {
+        setBlogs(blogs.concat(returnedBlog))
+        setNewBlog('')
+        setNewAuthor('')
+        setNewUrl('')
+        showNotification('Added a blog successfully', 'success')
+      })
+      .catch(error => {
+        console.log(error)
+        showNotification('Failed to add blog', 'error')
+      })
   }
 
   return (
     <div>
+      <Notification message={notifMessage} type={notifType} />
       {user === null ?
         <div>
           <h2>Log in to application</h2>
           {loginForm()}
         </div>
         :
-        lougoutForm()
+        <div>
+          {lougoutForm()}
+          <br></br>
+          <AddBlog
+            newBlog={newBlog}
+            newAuthor={newAuthor}
+            newUrl={newUrl}
+            handleBlogChange={({ target }) => setNewBlog(target.value)}
+            handleAuthorChange={({ target }) => setNewAuthor(target.value)}
+            handleUrlChange={({ target }) => setNewUrl(target.value)}
+            addBlog={addBlog}
+          />
+          <div>
+            <h2>blogs</h2>
+            {blogs.map(blog =>
+              <Blog key={blog.id} blog={blog} />
+            )}
+          </div>
+        </div>
       }
     </div>
   )
