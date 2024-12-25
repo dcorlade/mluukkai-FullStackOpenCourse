@@ -2,17 +2,15 @@ import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
-import AddBlog from './components/AddBlog'
+import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
+import Togglable from './components/Togglable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [newBlog, setNewBlog] = useState('')
-  const [newAuthor, setNewAuthor] = useState('')
-  const [newUrl, setNewUrl] = useState('')
   const [notifMessage, setNotifMessage] = useState(null)
   const [notifType, setNotifType] = useState('')
 
@@ -114,21 +112,11 @@ const App = () => {
     }
   }
 
-  const addBlog = (event) => {
-    event.preventDefault()
-    const blogObject = {
-      title: newBlog,
-      author: newAuthor,
-      url: newUrl,
-      likes: 0
-    }
+  const addBlog = (blogObject) => {
     blogService
       .create(blogObject)
       .then(returnedBlog => {
         setBlogs(blogs.concat(returnedBlog))
-        setNewBlog('')
-        setNewAuthor('')
-        setNewUrl('')
         showNotification('Added a blog successfully', 'success')
       })
       .catch(error => {
@@ -149,15 +137,12 @@ const App = () => {
         <div>
           {lougoutForm()}
           <br></br>
-          <AddBlog
-            newBlog={newBlog}
-            newAuthor={newAuthor}
-            newUrl={newUrl}
-            handleBlogChange={({ target }) => setNewBlog(target.value)}
-            handleAuthorChange={({ target }) => setNewAuthor(target.value)}
-            handleUrlChange={({ target }) => setNewUrl(target.value)}
-            addBlog={addBlog}
-          />
+          <Togglable buttonLabel='new blog'>
+            <BlogForm
+              createBlog={addBlog}
+            />
+          </Togglable>
+
           <div>
             <h2>blogs</h2>
             {blogs.map(blog =>
