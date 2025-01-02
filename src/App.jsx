@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -29,10 +29,15 @@ const App = () => {
     }
   }, [])
 
+  const timeoutIdRef = useRef(null)
+
   const showNotification = (message, type) => {
     setNotifMessage(message)
     setNotifType(type)
-    setTimeout(() => {
+    if (timeoutIdRef.current) {
+      clearTimeout(timeoutIdRef.current)
+    }
+    timeoutIdRef.current = setTimeout(() => {
       setNotifMessage(null)
       setNotifType('')
     }, 5000)
@@ -125,6 +130,19 @@ const App = () => {
       })
   }
 
+  const updateBlog = (id, blogObject) => {
+    blogService
+      .update(id, blogObject)
+      .then(updatedBlog => {
+        setBlogs(blogs.map(blog => blog.id !== id ? blog : updatedBlog))
+        showNotification('Updated a blog successfully', 'success')
+      })
+      .catch(error => {
+        console.log(error)
+        showNotification('Failed to update blog', 'error')
+      })
+  }
+
   return (
     <div>
       <Notification message={notifMessage} type={notifType} />
@@ -147,7 +165,7 @@ const App = () => {
             <h2>blogs</h2>
             {blogs.map(blog =>
               <div key={blog.id}>
-                <Blog blog={blog} />
+                <Blog blog={blog} updateBlog={updateBlog} />
               </div>
             )}
           </div>
