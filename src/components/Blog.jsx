@@ -1,7 +1,7 @@
 import Togglable from './Togglable'
 import { useState } from 'react'
 
-const Blog = ({ blog, updateBlog }) => {
+const Blog = ({ blog, updateBlog, removeBlog }) => {
   const [newLike, setNewLike] = useState(blog.likes)
 
   const blogStyle = {
@@ -18,17 +18,25 @@ const Blog = ({ blog, updateBlog }) => {
     updateBlog(blog.id, { ...blog, likes: updatedLikes })
   }
 
+  const deleteBlog = (event) => {
+    event.preventDefault()
+    removeBlog(blog.id)
+  }
+
   return (
     <div style={blogStyle}>
-      <div style={{ display: 'flex',  flexDirection:'column' }}>
-        <p>{blog.title} {blog.author}</p>
-        <Togglable buttonLabel='view' style={{ marginLeft: '30px' }}>
-          <p>{blog.url}</p>
-          <p>
-            likes {newLike}
-            <button onClick={putBlog}>like</button>
-          </p>
-          <p>{blog.user.name}</p>
+      <div style={{ display: 'flex', flexDirection:'column' }}>
+        <p style={{ margin: 0 }}>{blog.title} {blog.author}</p>
+        <Togglable buttonLabel='view'>
+          <div>
+            <p>{blog.url}</p>
+            <p>
+              likes {newLike}
+              <button onClick={putBlog}>like</button>
+            </p>
+            <p>{blog.user.name}</p>
+            <button onClick={deleteBlog}>remove</button>
+          </div>
         </Togglable>
       </div>
     </div>

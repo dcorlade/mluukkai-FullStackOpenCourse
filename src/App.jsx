@@ -32,6 +32,8 @@ const App = () => {
 
   const timeoutIdRef = useRef(null)
 
+  const addBlogFormRef = useRef()
+
   const showNotification = (message, type) => {
     setNotifMessage(message)
     setNotifType(type)
@@ -120,6 +122,7 @@ const App = () => {
 
   const addBlog = async (blogObject) => {
     try {
+      addBlogFormRef.current.toggleVisibility()
       const returnedBlog = await blogService.create(blogObject)
       setBlogs(blogs.concat(returnedBlog))
       showNotification('Added a blog successfully', 'success')
@@ -140,6 +143,25 @@ const App = () => {
     }
   }
 
+  const removeBlog = async (id) => {
+    try {
+      if (window.confirm('Are you sure you want to remove this blog?')) {
+        await blogService.remove(id)
+        setBlogs(blogs.filter(blog => blog.id !== id))
+        showNotification('Removed a blog successfully', 'success')
+      }
+    } catch (error) {
+      console.log(error)
+      if (error.response.data.error.includes('user not allowed')) {
+        showNotification('You are not allowed to remove this blog as you are not the owner', 'error')
+      }
+      else {
+        showNotification('Failed to remove blog', 'error')
+      }
+
+    }
+  }
+
   return (
     <div>
       <Notification message={notifMessage} type={notifType} />
@@ -152,7 +174,7 @@ const App = () => {
         <div>
           {lougoutForm()}
           <br></br>
-          <Togglable buttonLabel='new blog'>
+          <Togglable buttonLabel='new blog' ref={addBlogFormRef}>
             <BlogForm
               createBlog={addBlog}
             />
@@ -162,7 +184,7 @@ const App = () => {
             <h2>blogs</h2>
             {blogs.map(blog =>
               <div key={blog.id}>
-                <Blog blog={blog} updateBlog={updateBlog} />
+                <Blog blog={blog} updateBlog={updateBlog} removeBlog={removeBlog} />
               </div>
             )}
           </div>
