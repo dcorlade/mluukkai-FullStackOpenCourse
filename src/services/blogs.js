@@ -30,9 +30,6 @@ const create = async newObject => {
 }
 
 const update = async (id, newObject) => {
-  console.log('updating the likes of the blog')
-  console.log('id:', id)
-  console.log('newObject:', newObject)
 
   const config = {
     headers: { Authorization: token },

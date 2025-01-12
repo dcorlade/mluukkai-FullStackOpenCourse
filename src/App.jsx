@@ -117,30 +117,26 @@ const App = () => {
     }
   }
 
-  const addBlog = (blogObject) => {
-    blogService
-      .create(blogObject)
-      .then(returnedBlog => {
-        setBlogs(blogs.concat(returnedBlog))
-        showNotification('Added a blog successfully', 'success')
-      })
-      .catch(error => {
-        console.log(error)
-        showNotification('Failed to add blog', 'error')
-      })
+  const addBlog = async (blogObject) => {
+    try {
+      const returnedBlog = await blogService.create(blogObject)
+      setBlogs(blogs.concat(returnedBlog))
+      showNotification('Added a blog successfully', 'success')
+    } catch (error) {
+      console.log(error)
+      showNotification('Failed to add blog', 'error')
+    }
   }
 
-  const updateBlog = (id, blogObject) => {
-    blogService
-      .update(id, blogObject)
-      .then(updatedBlog => {
-        setBlogs(blogs.map(blog => blog.id !== id ? blog : updatedBlog))
-        showNotification('Updated a blog successfully', 'success')
-      })
-      .catch(error => {
-        console.log(error)
-        showNotification('Failed to update blog', 'error')
-      })
+  const updateBlog = async (id, blogObject) => {
+    try {
+      const updatedBlog = await blogService.update(id, blogObject)
+      setBlogs(blogs.map(blog => blog.id !== id ? blog : updatedBlog))
+      showNotification('Updated a blog successfully', 'success')
+    } catch (error) {
+      console.log(error)
+      showNotification('Failed to update blog', 'error')
+    }
   }
 
   return (
