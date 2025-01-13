@@ -5,6 +5,7 @@ import loginService from './services/login'
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
+import AuthForm from './components/AuthForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -46,39 +47,28 @@ const App = () => {
     }, 5000)
   }
 
-  const loginForm = () => (
-    <form onSubmit={handleLogin}>
-      <div>
-        username
-        <input
-          type="text"
-          value={username}
-          name="Username"
-          onChange={({ target }) => setUsername(target.value)}
-        />
-      </div>
-      <div>
-        password
-        <input
-          type="password"
-          value={password}
-          name="Password"
-          onChange={({ target }) => setPassword(target.value)}
-        />
-      </div>
-      <button type="submit">login</button>
-    </form>
-  )
+  const handleChange = (event) => {
+    const { name, value } = event.target
+    if (name === 'Username') setUsername(value)
+    if (name === 'Password') setPassword(value)
+  }
 
-  const lougoutForm = () => (
-    <div>
-      <form onSubmit={handleLogout}>
-        <p style={{ display: 'inline', marginRight: '10px' }}>
-          {user.name} logged-in
-        </p>
-        <button type="submit" style={{ display: 'inline' }}>logout</button>
-      </form>
-    </div>
+  const authForm = () => (
+    user === null ? (
+      <div>
+        <h2>Log in to the application</h2>
+        <AuthForm handleSubmit={handleLogin} handleChange={handleChange} values={{ username, password }} />
+      </div>
+    ) : (
+      <div>
+        <form onSubmit={handleLogout}>
+          <p style={{ display: 'inline', marginRight: '10px' }}>
+            {user.name} logged-in
+          </p>
+          <button type="submit" style={{ display: 'inline' }}>logout</button>
+        </form>
+      </div>
+    )
   )
 
   const handleLogin = async (event) => {
@@ -165,15 +155,9 @@ const App = () => {
   return (
     <div>
       <Notification message={notifMessage} type={notifType} />
-      {user === null ?
+      {authForm()}
+      {user !== null &&
         <div>
-          <h2>Log in to application</h2>
-          {loginForm()}
-        </div>
-        :
-        <div>
-          {lougoutForm()}
-          <br></br>
           <Togglable buttonLabel='new blog' ref={addBlogFormRef}>
             <BlogForm
               createBlog={addBlog}
