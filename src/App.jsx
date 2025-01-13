@@ -152,6 +152,10 @@ const App = () => {
     }
   }
 
+  const showButton = (blog) => {
+    return user && user.username === blog.user.username
+  }
+
   return (
     <div>
       <Notification message={notifMessage} type={notifType} />
@@ -159,16 +163,14 @@ const App = () => {
       {user !== null &&
         <div>
           <Togglable buttonLabel='new blog' ref={addBlogFormRef}>
-            <BlogForm
-              createBlog={addBlog}
-            />
+            <BlogForm createBlog={addBlog} />
           </Togglable>
 
           <div>
             <h2>blogs</h2>
             {blogs.map(blog =>
               <div key={blog.id}>
-                <Blog blog={blog} updateBlog={updateBlog} removeBlog={removeBlog} />
+                <Blog blog={blog} updateBlog={updateBlog} removeBlog={removeBlog} showButton={showButton(blog)} />
               </div>
             )}
           </div>

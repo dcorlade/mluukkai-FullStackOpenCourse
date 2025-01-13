@@ -1,7 +1,7 @@
 import Togglable from './Togglable'
 import { useState } from 'react'
 
-const Blog = ({ blog, updateBlog, removeBlog }) => {
+const Blog = ({ blog, updateBlog, removeBlog, showButton }) => {
   const [newLike, setNewLike] = useState(blog.likes)
 
   const blogStyle = {
@@ -35,7 +35,9 @@ const Blog = ({ blog, updateBlog, removeBlog }) => {
               <button onClick={putBlog}>like</button>
             </p>
             <p>{blog.user.name}</p>
-            <button onClick={deleteBlog}>remove</button>
+            {
+              showButton && <button onClick={deleteBlog}>remove</button>
+            }
           </div>
         </Togglable>
       </div>
