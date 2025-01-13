@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types'
+
 const AuthForm = ({ handleSubmit, handleChange, values }) => {
   return (
     <form onSubmit={handleSubmit}>
@@ -22,6 +24,12 @@ const AuthForm = ({ handleSubmit, handleChange, values }) => {
       <button type="submit">login</button>
     </form>
   )
+}
+
+AuthForm.propTypes = {
+  handleSubmit: PropTypes.func.isRequired,
+  handleChange: PropTypes.func.isRequired,
+  values: PropTypes.object.isRequired,
 }
 
 export default AuthForm
