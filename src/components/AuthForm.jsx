@@ -7,6 +7,7 @@ const AuthForm = ({ handleSubmit, handleChange, values }) => {
         username
         <input
           type="text"
+          data-testid='username'
           value={values.username}
           name="Username"
           onChange={handleChange}
@@ -16,6 +17,7 @@ const AuthForm = ({ handleSubmit, handleChange, values }) => {
         password
         <input
           type="password"
+          data-testid='password'
           value={values.password}
           name="Password"
           onChange={handleChange}
