@@ -63,7 +63,7 @@ const App = () => {
       <div>
         <form onSubmit={handleLogout}>
           <p style={{ display: 'inline', marginRight: '10px' }}>
-            {user.name} logged-in
+            {user.name} logged in
           </p>
           <button type="submit" style={{ display: 'inline' }}>logout</button>
         </form>
