@@ -21,12 +21,17 @@ const getAll = async () => {
 }
 
 const create = async newObject => {
-  const config = {
-    headers: { Authorization: token },
-  }
+  try {
+    const config = {
+      headers: { Authorization: token },
+    }
 
-  const response = await axios.post(baseUrl, newObject, config)
-  return response.data
+    const response = await axios.post(baseUrl, newObject, config)
+    return response.data
+  } catch (error) {
+    console.error('Error creating data:', error)
+    throw error
+  }
 }
 
 const update = async (id, newObject) => {

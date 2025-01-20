@@ -11,7 +11,7 @@ describe('Blog app', () => {
       }
     })
 
-    await page.goto('')
+    await page.goto('/')
   })
 
   test('Login form is shown', async ({ page }) => {
@@ -40,7 +40,6 @@ describe('Blog app', () => {
 
     describe('When logged in', () => {
       beforeEach(async ({ page }) => {
-        await page.getByRole('button', { name: 'login' }).click()
         await page.getByTestId('username').fill('test')
         await page.getByTestId('password').fill('user')
         await page.getByRole('button', { name: 'login' }).click()
