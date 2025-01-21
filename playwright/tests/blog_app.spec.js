@@ -1,4 +1,5 @@
 const { test, expect, beforeEach, describe } = require('@playwright/test')
+const { loginWith, createBlog, getLikesCount, updateLike } = require('./helper')
 
 
 describe('Blog app', () => {
@@ -24,50 +25,31 @@ describe('Blog app', () => {
 
   describe('Login', () => {
     test('succeeds with correct credentials', async ({ page }) => {
-      await page.fill('[data-testid=username]', 'test')
-      await page.fill('[data-testid=password]', 'user')
-      await page.getByRole('button', { name: 'login' }).click()
+      await loginWith(page, 'test', 'user')
 
       await expect(page.getByText('Test User logged in')).toBeVisible()
     })
 
     test('fails with wrong credentials', async ({ page }) => {
-      await page.fill('[data-testid=username]', 'test')
-      await page.fill('[data-testid=password]', 'wrong')
-      await page.getByRole('button', { name: 'login' }).click()
+      await loginWith(page, 'test', 'wrong')
 
       await expect(page.getByText('Failed to login: incorrect username or password')).toBeVisible()
     })
 
     describe('When logged in', () => {
       beforeEach(async ({ page }) => {
-        await page.getByTestId('username').fill('test')
-        await page.getByTestId('password').fill('user')
-        await page.getByRole('button', { name: 'login' }).click()
+        await loginWith(page, 'test', 'user')
       })
 
       test('a new blog can be created', async ({ page }) => {
-        await page.getByRole('button', { name: 'new blog' }).click()
-        await page.getByTestId('blog-title').fill('a blog created by ')
-        await page.getByTestId('blog-author').fill('playwright')
-        await page.getByTestId('blog-url').fill('https://playwright.dev')
-        await page.getByRole('button', { name: 'add' }).click()
+        await createBlog(page, 'a blog created by ', 'playwright', 'https://playwright.dev')
         await expect(page.getByText('a blog created by playwright')).toBeVisible()
       })
 
       describe('and a blog exists', () => {
         beforeEach(async ({ page }) => {
-          await page.getByRole('button', { name: 'new blog' }).click()
-          await page.getByTestId('blog-title').fill('a blog created by ')
-          await page.getByTestId('blog-author').fill('playwright')
-          await page.getByTestId('blog-url').fill('https://playwright.dev')
-          await page.getByRole('button', { name: 'add' }).click()
+          await createBlog(page, 'a blog created by ', 'playwright', 'https://playwright.dev')
         })
-
-        const getLikesCount = async (page) => {
-          const likesText = await page.getByTestId('likes').innerText()
-          return parseInt(likesText.match(/\d+/)[0])
-        }
 
         test('a blog can be liked', async ({ page }) => {
           await page.getByRole('button', { name: 'view' }).click()
@@ -101,12 +83,43 @@ describe('Blog app', () => {
           })
 
           await page.getByRole('button', { name: 'logout' }).click()
-          await page.getByTestId('username').fill('secondtest')
-          await page.getByTestId('password').fill('seconduser')
-          await page.getByRole('button', { name: 'login' }).click()
+          loginWith(page, 'secondtest', 'seconduser')
 
           await page.getByRole('button', { name: 'view' }).click()
           await expect(page.getByRole('button', { name: 'remove' })).not.toBeVisible()
+        })
+
+        test('blogs are ordered by likes', async ({ page }) => {
+          // add 3 more blogs
+          await createBlog(page, 'second blog', 'playwright', 'https://playwright.dev')
+          await createBlog(page, 'third blog', 'playwright', 'https://playwright.dev')
+          await createBlog(page, 'fourth blog', 'playwright', 'https://playwright.dev')
+          //add likes to blogs
+          const blogLikes = []
+          const blogs = await page.getByTestId('blog').all()
+          expect(blogs.length).toEqual(4)
+
+          for (const blog of blogs) {
+            const likes = await updateLike(blog, Math.floor(Math.random() * 10))
+            const blogTitle = await blog.getByTestId('title').innerText()
+            blogLikes.push({ blogTitle, likes })
+          }
+
+          await page.waitForTimeout(500)
+
+          // sort the blogs by likes
+          blogLikes.sort((a, b) => b.likes - a.likes)
+          console.log(blogLikes)
+
+          // check if the blogs are sorted in the UI
+          const updatedBlogs = await page.getByTestId('blog').all()
+          for (const blog of updatedBlogs) {
+            const blogTitle = blogLikes.shift().blogTitle
+            const actualBlogTitle = await blog.getByTestId('title').innerText()
+            const actualBlogLikes = await blog.getByTestId('likes').innerText()
+            console.log('blog title: ', actualBlogTitle, actualBlogLikes)
+            expect(blogTitle).toEqual(actualBlogTitle)
+          }
         })
       })
     })

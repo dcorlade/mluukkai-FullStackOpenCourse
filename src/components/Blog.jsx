@@ -24,9 +24,9 @@ const Blog = ({ blog, updateBlog, removeBlog, showButton }) => {
   }
 
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} >
       <div style={{ display: 'flex', flexDirection:'column' }}>
-        <p style={{ margin: 0 }}>{blog.title} {blog.author}</p>
+        <p style={{ margin: 0 }} data-testid='title'>{blog.title} {blog.author}</p>
         <Togglable buttonLabel='view'>
           <div>
             <p>{blog.url}</p>

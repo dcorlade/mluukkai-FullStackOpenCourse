@@ -20,7 +20,7 @@ const App = () => {
       blogs.sort((a, b) => b.likes - a.likes)
       setBlogs(blogs)
     })
-  }, [])
+  }, [blogs])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
@@ -170,7 +170,7 @@ const App = () => {
           <div>
             <h2>blogs</h2>
             {blogs.map(blog =>
-              <div key={blog.id}>
+              <div key={blog.id} data-testid='blog'>
                 <Blog blog={blog} updateBlog={updateBlog} removeBlog={removeBlog} showButton={showButton(blog)} />
               </div>
             )}
