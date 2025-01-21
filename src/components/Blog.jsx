@@ -30,7 +30,7 @@ const Blog = ({ blog, updateBlog, removeBlog, showButton }) => {
         <Togglable buttonLabel='view'>
           <div>
             <p>{blog.url}</p>
-            <p>
+            <p data-testid='likes'>
               likes {newLike}
               <button onClick={putBlog}>like</button>
             </p>
