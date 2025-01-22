@@ -26,6 +26,23 @@ export const actionVote = (id) => {
   }
 }
 
+export const actionCreateAnecdote = (content) => {
+  return {
+    type: 'NEW_ANECDOTE',
+    payload: {
+      content,
+      id: getId(),
+      votes: 0
+    }
+  }
+}
+
+export const actionSort = () => {
+  return {
+    type: 'SORT'
+  }
+}
+
 const reducer = (state = initialState, action) => {
   console.log('state now: ', state)
   console.log('action', action)
@@ -37,6 +54,10 @@ const reducer = (state = initialState, action) => {
           ? { ...anecdote, votes: anecdote.votes + 1 }
           : anecdote
       )
+    case 'NEW_ANECDOTE':
+      return [...state, action.payload]
+    case 'SORT':
+      return state.slice().sort((a, b) => b.votes - a.votes)
     default:
       return state
   }
