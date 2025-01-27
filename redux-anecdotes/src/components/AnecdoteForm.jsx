@@ -1,5 +1,5 @@
 import { useDispatch } from 'react-redux'
-import { actionCreateAnecdote } from '../reducers/anecdoteReducer'
+import { createAnecdote } from '../reducers/anecdoteReducer'
 
 
 const AnecdoteForm = () => {
@@ -9,7 +9,7 @@ const AnecdoteForm = () => {
     event.preventDefault()
     const content = event.target.anecdote.value
     event.target.anecdote.value = ''
-    dispatch(actionCreateAnecdote(content))
+    dispatch(createAnecdote(content))
   }
   return(
     <div>
