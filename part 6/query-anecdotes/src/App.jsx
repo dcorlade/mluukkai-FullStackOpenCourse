@@ -3,10 +3,12 @@ import AnecdoteForm from './components/AnecdoteForm'
 import Notification from './components/Notification'
 import axios from 'axios'
 import { getAnecdotes, voteAnecdote } from '../requests'
+import { useNotificationDispatch } from './NotificationContext'
 
 
 const App = () => {
   const queryClient = useQueryClient()
+  const notificationDispatch = useNotificationDispatch()
 
   const voteMutation = useMutation({ 
     mutationFn: voteAnecdote,
@@ -17,6 +19,8 @@ const App = () => {
 
   const handleVote = (anecdote) => {
     voteMutation.mutate({ ...anecdote, votes: anecdote.votes + 1 })
+    notificationDispatch({ type: 'SET_NOTIFICATION', payload: 'vote added' })
+    setTimeout(() => {notificationDispatch({ type: 'SET_NOTIFICATION', payload: null })}, 5000)
   }
 
   const result = useQuery(

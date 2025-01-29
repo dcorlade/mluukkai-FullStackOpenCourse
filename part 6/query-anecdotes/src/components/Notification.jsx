@@ -1,6 +1,6 @@
 import { act } from "react"
 import { useReducer } from "react"
-import { useNotificationValue } from "./NotificationContext"
+import { useNotificationValue } from "../NotificationContext"
 
 
 const Notification = () => {
@@ -13,6 +13,7 @@ const Notification = () => {
   }
   
   return (
+    notification &&
     <div style={style}>
       {notification}
     </div>

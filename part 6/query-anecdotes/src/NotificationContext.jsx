@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { createContext, useContext, useReducer } from "react"
 
 const notificationReducer = (state, action) => {
@@ -13,10 +12,10 @@ const notificationReducer = (state, action) => {
 const NotificationContext = createContext()
 
 export const NotificationContextProvider = (props) => {
-    const [notification, notificationDispatch] = useReducer(notificationReducer, '')
+    const [notification, notificationDispatch] = useReducer(notificationReducer, null)
 
     return (
-        <NotificationContext.Provider value={{ notification, notificationDispatch }}>
+        <NotificationContext.Provider value={[ notification, notificationDispatch ]}>
             {props.children}
         </NotificationContext.Provider>
     )
