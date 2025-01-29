@@ -10,8 +10,8 @@ const AnecdoteForm = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['anecdotes'] })
     },
-    onError: () => {
-      notificationDispatch({ type: 'SET_NOTIFICATION', payload: 'error in creating anecdote' })
+    onError: (err) => {
+      notificationDispatch({ type: 'SET_NOTIFICATION', payload: err.response.data.error })
       setTimeout(() => {notificationDispatch({ type: 'SET_NOTIFICATION', payload: null })}, 5000)
     }
    })
