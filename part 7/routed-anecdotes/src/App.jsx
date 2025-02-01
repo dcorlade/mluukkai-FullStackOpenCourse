@@ -1,11 +1,21 @@
 /* eslint-disable */
 
 import { useState } from 'react'
-import { Link, Route, Routes, useMatch } from 'react-router-dom'
+import { Link, Route, Routes, useMatch, useNavigate } from 'react-router-dom'
 
-const Menu = ({anecdotes}) => {
+const Menu = ({anecdotes, addNew, setNotification, notification}) => {
   const padding = {
     paddingRight: 5
+  }
+
+  const notificationStyle = {
+    color: 'green',
+    fontStyle: 'italic',
+    fontSize: 16,
+    border: 'solid',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10
   }
 
   console.log("HEY: ", anecdotes)
@@ -16,9 +26,10 @@ const Menu = ({anecdotes}) => {
         <Link style={padding} to="/create">create new</Link>
         <Link style={padding} to="/about">about</Link>
       </div>
+      {notification && <div style={notificationStyle}>{notification}</div> }
       <Routes>
         <Route path="/anecdotes" element={<AnecdoteList anecdotes={anecdotes}/>} />
-        <Route path="/create" element={<CreateNew />} />
+        <Route path="/create" element={<CreateNew addNew={addNew} setNotification={setNotification}/>} />
         <Route path="/about" element={<About />} />
         <Route path="/" element={<AnecdoteList anecdotes={anecdotes} />} />
         <Route path="/anecdotes/:id" element={<Anecdote anecdotes={anecdotes}/> } />
@@ -81,6 +92,7 @@ const CreateNew = (props) => {
   const [content, setContent] = useState('')
   const [author, setAuthor] = useState('')
   const [info, setInfo] = useState('')
+  const navigate = useNavigate()
 
 
   const handleSubmit = (e) => {
@@ -91,6 +103,11 @@ const CreateNew = (props) => {
       info,
       votes: 0
     })
+    props.setNotification(`a new anecdote ${content} created!`)
+    setTimeout(() => {
+      props.setNotification('')
+    }, 5000)
+    navigate('/')
   }
 
   return (
@@ -159,7 +176,7 @@ const App = () => {
   return (
     <div>
       <h1>Software anecdotes</h1>
-      <Menu anecdotes={anecdotes} />
+      <Menu anecdotes={anecdotes} addNew={addNew} setNotification={setNotification} notification={notification}/>
       <Footer />
     </div>
   )
