@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Link, Route, Routes, useMatch, useNavigate } from 'react-router-dom'
+import { useField } from './hooks'
 
 const Menu = ({anecdotes, addNew, setNotification, notification}) => {
   const padding = {
@@ -18,7 +19,6 @@ const Menu = ({anecdotes, addNew, setNotification, notification}) => {
     marginBottom: 10
   }
 
-  console.log("HEY: ", anecdotes)
   return (
     <div>
       <div>
@@ -89,25 +89,31 @@ const Footer = () => (
 )
 
 const CreateNew = (props) => {
-  const [content, setContent] = useState('')
-  const [author, setAuthor] = useState('')
-  const [info, setInfo] = useState('')
   const navigate = useNavigate()
-
+  const {reset: resetContent, ...content} = useField('content')
+  const {reset: resetAuthor, ...author} = useField('author')
+  const {reset: resetInfo, ...info} = useField('info')
 
   const handleSubmit = (e) => {
     e.preventDefault()
     props.addNew({
-      content,
-      author,
-      info,
+      content: content.value,
+      author: author.value,
+      info: info.value,
       votes: 0
     })
-    props.setNotification(`a new anecdote ${content} created!`)
+    props.setNotification(`a new anecdote ${content.value} created!`)
     setTimeout(() => {
       props.setNotification('')
     }, 5000)
     navigate('/')
+  }
+
+  const handleReset = (e) => {
+    e.preventDefault()
+    resetContent()
+    resetAuthor()
+    resetInfo()
   }
 
   return (
@@ -116,17 +122,18 @@ const CreateNew = (props) => {
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <input name='content' value={content} onChange={(e) => setContent(e.target.value)} />
+          <input {...content}/>
         </div>
         <div>
           author
-          <input name='author' value={author} onChange={(e) => setAuthor(e.target.value)} />
+          <input {...author} />
         </div>
         <div>
           url for more info
-          <input name='info' value={info} onChange={(e)=> setInfo(e.target.value)} />
+          <input {...info}/>
         </div>
         <button>create</button>
+        <button type="button" onClick={handleReset}>reset</button>
       </form>
     </div>
   )
