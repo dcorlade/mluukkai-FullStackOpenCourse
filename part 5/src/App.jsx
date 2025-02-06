@@ -20,7 +20,7 @@ const App = () => {
       blogs.sort((a, b) => b.likes - a.likes)
       setBlogs(blogs)
     })
-  }, [blogs])
+  }, [])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
@@ -125,8 +125,13 @@ const App = () => {
 
   const updateBlog = async (id, blogObject) => {
     try {
+      console.log('likes: ' + blogObject.likes)
       const updatedBlog = await blogService.update(id, blogObject)
-      setBlogs(blogs.map(blog => blog.id !== id ? blog : updatedBlog))
+      console.log(updatedBlog)
+      const updatedBlogs = blogs.map(blog => blog.id !== id ? blog : updatedBlog)
+      console.log(updatedBlogs)
+      updatedBlogs.sort((a, b) => b.likes - a.likes)
+      setBlogs([...updatedBlogs])
       showNotification('Updated a blog successfully', 'success')
     } catch (error) {
       console.log(error)

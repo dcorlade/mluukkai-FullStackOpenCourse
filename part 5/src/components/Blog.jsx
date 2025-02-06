@@ -11,11 +11,12 @@ const Blog = ({ blog, updateBlog, removeBlog, showButton }) => {
     marginBottom: 5
   }
 
-  const putBlog = (event) => {
+  const putBlog = async (event) => {
     event.preventDefault()
     const updatedLikes = newLike + 1
     setNewLike(updatedLikes)
-    updateBlog(blog.id, { ...blog, likes: updatedLikes })
+    console.log(updatedLikes)
+    await updateBlog(blog.id, { ...blog, likes: updatedLikes })
   }
 
   const deleteBlog = (event) => {
