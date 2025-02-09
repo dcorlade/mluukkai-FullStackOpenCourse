@@ -7,10 +7,11 @@ import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import AuthForm from './components/AuthForm'
 import { notify } from './reducers/notificationReducer'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { initializeBlogs } from './reducers/blogReducer'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
+  const blogs = useSelector(({ blogs }) => blogs)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
@@ -18,11 +19,8 @@ const App = () => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => {
-      blogs.sort((a, b) => b.likes - a.likes)
-      setBlogs(blogs)
-    })
-  }, [])
+    dispatch(initializeBlogs())
+  }, [dispatch])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
@@ -100,19 +98,6 @@ const App = () => {
     }
   }
 
-  const addBlog = async (blogObject) => {
-    try {
-      addBlogFormRef.current.toggleVisibility()
-      const returnedBlog = await blogService.create(blogObject)
-      returnedBlog.user = user
-      setBlogs(blogs.concat(returnedBlog))
-      dispatch(notify('Added a new blog successfully', 'success', 5000))
-    } catch (error) {
-      console.log(error)
-      dispatch(notify('Failed to add a new blog', 'error', 5000))
-    }
-  }
-
   const updateBlog = async (id, blogObject) => {
     try {
       console.log('likes: ' + blogObject.likes)
@@ -121,7 +106,6 @@ const App = () => {
       const updatedBlogs = blogs.map((blog) => (blog.id !== id ? blog : updatedBlog))
       console.log(updatedBlogs)
       updatedBlogs.sort((a, b) => b.likes - a.likes)
-      setBlogs([...updatedBlogs])
       dispatch(notify('Updated a blog successfully', 'success', 5000))
     } catch (error) {
       console.log(error)
@@ -133,7 +117,6 @@ const App = () => {
     try {
       if (window.confirm('Are you sure you want to remove this blog?')) {
         await blogService.remove(id)
-        setBlogs(blogs.filter((blog) => blog.id !== id))
         dispatch(notify('Removed a blog successfully', 'success', 5000))
       }
     } catch (error) {
@@ -157,7 +140,7 @@ const App = () => {
       {user !== null && (
         <div>
           <Togglable buttonLabel="new blog" ref={addBlogFormRef}>
-            <BlogForm createBlog={addBlog} />
+            <BlogForm />
           </Togglable>
 
           <div>
