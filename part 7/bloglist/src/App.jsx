@@ -6,14 +6,16 @@ import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import AuthForm from './components/AuthForm'
+import { notify } from './reducers/notificationReducer'
+import { useDispatch } from 'react-redux'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [notifMessage, setNotifMessage] = useState(null)
-  const [notifType, setNotifType] = useState('')
+
+  const dispatch = useDispatch()
 
   useEffect(() => {
     blogService.getAll().then((blogs) => {
@@ -31,21 +33,7 @@ const App = () => {
     }
   }, [])
 
-  const timeoutIdRef = useRef(null)
-
   const addBlogFormRef = useRef()
-
-  const showNotification = (message, type) => {
-    setNotifMessage(message)
-    setNotifType(type)
-    if (timeoutIdRef.current) {
-      clearTimeout(timeoutIdRef.current)
-    }
-    timeoutIdRef.current = setTimeout(() => {
-      setNotifMessage(null)
-      setNotifType('')
-    }, 5000)
-  }
 
   const handleChange = (event) => {
     const { name, value } = event.target
@@ -89,10 +77,10 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
-      showNotification('Logged in successfully', 'success')
+      dispatch(notify('Logged in successfully', 'success', 5000))
     } catch (err) {
       console.log(err)
-      showNotification('Failed to login: incorrect username or password', 'error')
+      dispatch(notify('Failed to login: incorrect username or password', 'err', 5000))
     }
   }
 
@@ -105,10 +93,10 @@ const App = () => {
       setUser(null)
       setUsername('')
       setPassword('')
-      showNotification('Logged out successfully', 'success')
+      dispatch(notify('Logged out successfully', 'success', 5000))
     } catch (err) {
       console.log(err)
-      showNotification('Failed to logout', 'error')
+      dispatch(notify('Failed to logout', 'err', 5000))
     }
   }
 
@@ -118,10 +106,10 @@ const App = () => {
       const returnedBlog = await blogService.create(blogObject)
       returnedBlog.user = user
       setBlogs(blogs.concat(returnedBlog))
-      showNotification('Added a blog successfully', 'success')
+      dispatch(notify('Added a new blog successfully', 'success', 5000))
     } catch (error) {
       console.log(error)
-      showNotification('Failed to add blog', 'error')
+      dispatch(notify('Failed to add a new blog', 'error', 5000))
     }
   }
 
@@ -134,10 +122,10 @@ const App = () => {
       console.log(updatedBlogs)
       updatedBlogs.sort((a, b) => b.likes - a.likes)
       setBlogs([...updatedBlogs])
-      showNotification('Updated a blog successfully', 'success')
+      dispatch(notify('Updated a blog successfully', 'success', 5000))
     } catch (error) {
       console.log(error)
-      showNotification('Failed to update blog', 'error')
+      dispatch(notify('Failed to update blog', 'error', 5000))
     }
   }
 
@@ -146,17 +134,14 @@ const App = () => {
       if (window.confirm('Are you sure you want to remove this blog?')) {
         await blogService.remove(id)
         setBlogs(blogs.filter((blog) => blog.id !== id))
-        showNotification('Removed a blog successfully', 'success')
+        dispatch(notify('Removed a blog successfully', 'success', 5000))
       }
     } catch (error) {
       console.log(error)
       if (error.response.data.error.includes('user not allowed')) {
-        showNotification(
-          'You are not allowed to remove this blog as you are not the owner',
-          'error'
-        )
+        dispatch(notify('You are not allowed to remove this blog', 'error', 5000))
       } else {
-        showNotification('Failed to remove blog', 'error')
+        dispatch(notify('Failed to remove blog', 'error', 5000))
       }
     }
   }
@@ -167,7 +152,7 @@ const App = () => {
 
   return (
     <div>
-      <Notification message={notifMessage} type={notifType} />
+      <Notification />
       {authForm()}
       {user !== null && (
         <div>
