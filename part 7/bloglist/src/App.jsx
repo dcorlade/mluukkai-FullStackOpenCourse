@@ -16,7 +16,7 @@ const App = () => {
   const [notifType, setNotifType] = useState('')
 
   useEffect(() => {
-    blogService.getAll().then(blogs => {
+    blogService.getAll().then((blogs) => {
       blogs.sort((a, b) => b.likes - a.likes)
       setBlogs(blogs)
     })
@@ -53,23 +53,26 @@ const App = () => {
     if (name === 'Password') setPassword(value)
   }
 
-  const authForm = () => (
+  const authForm = () =>
     user === null ? (
       <div>
         <h2>Log in to the application</h2>
-        <AuthForm handleSubmit={handleLogin} handleChange={handleChange} values={{ username, password }} />
+        <AuthForm
+          handleSubmit={handleLogin}
+          handleChange={handleChange}
+          values={{ username, password }}
+        />
       </div>
     ) : (
       <div>
         <form onSubmit={handleLogout}>
-          <p style={{ display: 'inline', marginRight: '10px' }}>
-            {user.name} logged in
-          </p>
-          <button type="submit" style={{ display: 'inline' }}>logout</button>
+          <p style={{ display: 'inline', marginRight: '10px' }}>{user.name} logged in</p>
+          <button type="submit" style={{ display: 'inline' }}>
+            logout
+          </button>
         </form>
       </div>
     )
-  )
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -77,12 +80,11 @@ const App = () => {
     try {
       console.log('Logging in')
       const user = await loginService.login({
-        username, password,
+        username,
+        password
       })
 
-      window.localStorage.setItem(
-        'loggedBlogappUser', JSON.stringify(user)
-      )
+      window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
       blogService.setToken(user.token)
       setUser(user)
       setUsername('')
@@ -128,7 +130,7 @@ const App = () => {
       console.log('likes: ' + blogObject.likes)
       const updatedBlog = await blogService.update(id, blogObject)
       console.log(updatedBlog)
-      const updatedBlogs = blogs.map(blog => blog.id !== id ? blog : updatedBlog)
+      const updatedBlogs = blogs.map((blog) => (blog.id !== id ? blog : updatedBlog))
       console.log(updatedBlogs)
       updatedBlogs.sort((a, b) => b.likes - a.likes)
       setBlogs([...updatedBlogs])
@@ -143,18 +145,19 @@ const App = () => {
     try {
       if (window.confirm('Are you sure you want to remove this blog?')) {
         await blogService.remove(id)
-        setBlogs(blogs.filter(blog => blog.id !== id))
+        setBlogs(blogs.filter((blog) => blog.id !== id))
         showNotification('Removed a blog successfully', 'success')
       }
     } catch (error) {
       console.log(error)
       if (error.response.data.error.includes('user not allowed')) {
-        showNotification('You are not allowed to remove this blog as you are not the owner', 'error')
-      }
-      else {
+        showNotification(
+          'You are not allowed to remove this blog as you are not the owner',
+          'error'
+        )
+      } else {
         showNotification('Failed to remove blog', 'error')
       }
-
     }
   }
 
@@ -166,22 +169,27 @@ const App = () => {
     <div>
       <Notification message={notifMessage} type={notifType} />
       {authForm()}
-      {user !== null &&
+      {user !== null && (
         <div>
-          <Togglable buttonLabel='new blog' ref={addBlogFormRef}>
+          <Togglable buttonLabel="new blog" ref={addBlogFormRef}>
             <BlogForm createBlog={addBlog} />
           </Togglable>
 
           <div>
             <h2>blogs</h2>
-            {blogs.map(blog =>
-              <div key={blog.id} data-testid='blog'>
-                <Blog blog={blog} updateBlog={updateBlog} removeBlog={removeBlog} showButton={showButton(blog)} />
+            {blogs.map((blog) => (
+              <div key={blog.id} data-testid="blog">
+                <Blog
+                  blog={blog}
+                  updateBlog={updateBlog}
+                  removeBlog={removeBlog}
+                  showButton={showButton(blog)}
+                />
               </div>
-            )}
+            ))}
           </div>
         </div>
-      }
+      )}
     </div>
   )
 }

@@ -25,20 +25,20 @@ const Blog = ({ blog, updateBlog, removeBlog, showButton }) => {
   }
 
   return (
-    <div style={blogStyle} >
-      <div style={{ display: 'flex', flexDirection:'column' }}>
-        <p style={{ margin: 0 }} data-testid='title'>{blog.title} {blog.author}</p>
-        <Togglable buttonLabel='view'>
+    <div style={blogStyle}>
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <p style={{ margin: 0 }} data-testid="title">
+          {blog.title} {blog.author}
+        </p>
+        <Togglable buttonLabel="view">
           <div>
             <p>{blog.url}</p>
-            <p data-testid='likes'>
+            <p data-testid="likes">
               likes {newLike}
               <button onClick={putBlog}>like</button>
             </p>
             <p>{blog.user.name}</p>
-            {
-              showButton && <button onClick={deleteBlog}>remove</button>
-            }
+            {showButton && <button onClick={deleteBlog}>remove</button>}
           </div>
         </Togglable>
       </div>

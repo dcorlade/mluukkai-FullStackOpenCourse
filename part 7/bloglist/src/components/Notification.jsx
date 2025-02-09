@@ -5,11 +5,7 @@ const Notification = ({ message, type }) => {
 
   const notificationClass = type === 'error' ? 'error' : 'notif'
 
-  return (
-    <div className={notificationClass}>
-      {message}
-    </div>
-  )
+  return <div className={notificationClass}>{message}</div>
 }
 
 export default Notification

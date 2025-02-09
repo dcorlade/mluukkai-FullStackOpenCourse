@@ -7,7 +7,7 @@ const AuthForm = ({ handleSubmit, handleChange, values }) => {
         username
         <input
           type="text"
-          data-testid='username'
+          data-testid="username"
           value={values.username}
           name="Username"
           onChange={handleChange}
@@ -17,7 +17,7 @@ const AuthForm = ({ handleSubmit, handleChange, values }) => {
         password
         <input
           type="password"
-          data-testid='password'
+          data-testid="password"
           value={values.password}
           name="Password"
           onChange={handleChange}
@@ -31,7 +31,7 @@ const AuthForm = ({ handleSubmit, handleChange, values }) => {
 AuthForm.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   handleChange: PropTypes.func.isRequired,
-  values: PropTypes.object.isRequired,
+  values: PropTypes.object.isRequired
 }
 
 export default AuthForm

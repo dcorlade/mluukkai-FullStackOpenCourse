@@ -3,18 +3,14 @@ import BlogForm from './BlogForm'
 import userEvent from '@testing-library/user-event'
 import { expect } from 'vitest'
 
-
 describe('<Blog />', () => {
   const createBlog = vi.fn()
 
   beforeEach(() => {
-    render(
-      <BlogForm createBlog={createBlog} />
-    )
+    render(<BlogForm createBlog={createBlog} />)
   })
 
-  test('form creates new blog with right values',async () => {
-
+  test('form creates new blog with right values', async () => {
     const user = userEvent.setup()
     const inputBlog = screen.getByPlaceholderText('write blog title here')
     await user.type(inputBlog, 'blog name')
@@ -31,11 +27,8 @@ describe('<Blog />', () => {
       title: 'blog name',
       author: 'author name',
       url: 'url name',
-      likes: 0 })
+      likes: 0
+    })
     console.log(createBlog.mock.calls)
   })
-
-
-
-
 })
