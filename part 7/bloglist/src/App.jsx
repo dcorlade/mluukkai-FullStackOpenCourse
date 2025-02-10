@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
-import loginService from './services/login'
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
@@ -9,27 +8,26 @@ import AuthForm from './components/AuthForm'
 import { notify } from './reducers/notificationReducer'
 import { useDispatch, useSelector } from 'react-redux'
 import { initializeBlogs } from './reducers/blogReducer'
+import { initializeUser, loginUser, logoutUser } from './reducers/userReducer'
 
 const App = () => {
   const blogs = useSelector(({ blogs }) => blogs)
+  const user = useSelector(({ user }) => user)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
 
   const dispatch = useDispatch()
 
   useEffect(() => {
     dispatch(initializeBlogs())
+    dispatch(initializeUser())
   }, [dispatch])
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-      setUser(user)
+    if (user) {
       blogService.setToken(user.token)
     }
-  }, [])
+  }, [user])
 
   const addBlogFormRef = useRef()
 
@@ -64,15 +62,7 @@ const App = () => {
     event.preventDefault()
 
     try {
-      console.log('Logging in')
-      const user = await loginService.login({
-        username,
-        password
-      })
-
-      window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
-      blogService.setToken(user.token)
-      setUser(user)
+      dispatch(loginUser(username, password))
       setUsername('')
       setPassword('')
       dispatch(notify('Logged in successfully', 'success', 5000))
@@ -86,9 +76,7 @@ const App = () => {
     event.preventDefault()
 
     try {
-      window.localStorage.removeItem('loggedBlogappUser')
-
-      setUser(null)
+      dispatch(logoutUser())
       setUsername('')
       setPassword('')
       dispatch(notify('Logged out successfully', 'success', 5000))
