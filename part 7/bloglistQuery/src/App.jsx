@@ -1,27 +1,26 @@
-import { useState, useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Blog from './components/Blog'
-import blogService from './services/blogs'
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import AuthForm from './components/AuthForm'
-import { notify } from './reducers/notificationReducer'
-import { useDispatch, useSelector } from 'react-redux'
-import { initializeBlogs } from './reducers/blogReducer'
-import { initializeUser, loginUser, logoutUser } from './reducers/userReducer'
+import { useQuery } from '@tanstack/react-query'
+import blogService from './services/blogs'
+import { useUser } from './contexts/UserContext'
+import { useNotify } from './contexts/NotificationContext'
 
 const App = () => {
-  const blogs = useSelector(({ blogs }) => blogs)
-  const user = useSelector(({ user }) => user)
+  const { user, login, logout } = useUser()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-
-  const dispatch = useDispatch()
-
-  useEffect(() => {
-    dispatch(initializeBlogs())
-    dispatch(initializeUser())
-  }, [dispatch])
+  const notify = useNotify()
+  const result = useQuery({
+    queryKey: ['blogs'],
+    queryFn: blogService.getAll,
+    retry: false
+  })
+  const blogs = result.data
+  console.log(blogs)
 
   useEffect(() => {
     if (user) {
@@ -35,6 +34,33 @@ const App = () => {
     const { name, value } = event.target
     if (name === 'Username') setUsername(value)
     if (name === 'Password') setPassword(value)
+  }
+
+  const handleLogin = async (event) => {
+    event.preventDefault()
+    try {
+      await login(username, password)
+      setUsername('')
+      setPassword('')
+      notify({ message: 'Logged in', type: 'success' })
+    } catch (error) {
+      notify({ message: 'Error logging in', type: 'err' })
+      console.log(error)
+    }
+  }
+  const handleLogout = async (event) => {
+    event.preventDefault()
+    try {
+      await logout()
+      notify({ message: 'Logged out', type: 'success' })
+    } catch (error) {
+      notify({ message: 'Error logging out', type: 'err' })
+      console.log(error)
+    }
+  }
+
+  const showButton = (blog) => {
+    return user && user.username === blog.user.username
   }
 
   const authForm = () =>
@@ -58,38 +84,6 @@ const App = () => {
       </div>
     )
 
-  const handleLogin = async (event) => {
-    event.preventDefault()
-
-    try {
-      dispatch(loginUser(username, password))
-      setUsername('')
-      setPassword('')
-      dispatch(notify('Logged in successfully', 'success', 5000))
-    } catch (err) {
-      console.log(err)
-      dispatch(notify('Failed to login: incorrect username or password', 'err', 5000))
-    }
-  }
-
-  const handleLogout = async (event) => {
-    event.preventDefault()
-
-    try {
-      dispatch(logoutUser())
-      setUsername('')
-      setPassword('')
-      dispatch(notify('Logged out successfully', 'success', 5000))
-    } catch (err) {
-      console.log(err)
-      dispatch(notify('Failed to logout', 'err', 5000))
-    }
-  }
-
-  const showButton = (blog) => {
-    return user && user.username === blog.user.username
-  }
-
   return (
     <div>
       <Notification />
@@ -102,11 +96,15 @@ const App = () => {
 
           <div>
             <h2>blogs</h2>
-            {blogs.map((blog) => (
-              <div key={blog.id} data-testid="blog">
-                <Blog blogId={blog.id} showButton={showButton(blog)} />
-              </div>
-            ))}
+            {result.isLoading && <p>Loading blogs...</p>}
+            {result.isError && <p>Error loading blogs</p>}
+            {result.isSuccess &&
+              blogs &&
+              blogs.map((blog) => (
+                <div key={blog.id} data-testid="blog">
+                  <Blog blogId={blog.id} showButton={showButton(blog)} />
+                </div>
+              ))}
           </div>
         </div>
       )}

@@ -21,7 +21,6 @@ module.exports = {
     'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
     'react/prop-types': 0,
     // Stylistic rules from the backend config
-    '@stylistic/js/indent': ['error', 2],
     '@stylistic/js/linebreak-style': ['error', 'windows'],
     '@stylistic/js/quotes': ['error', 'single'],
     '@stylistic/js/semi': ['error', 'never'],

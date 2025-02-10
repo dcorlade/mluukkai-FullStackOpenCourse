@@ -1,26 +1,34 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
-import { useDispatch } from 'react-redux'
-import { createBlog } from '../reducers/blogReducer'
-import { notify } from '../reducers/notificationReducer'
+import blogService from '../services/blogs'
+import { useNotify } from '../contexts/NotificationContext'
 
 const BlogForm = () => {
   const [newBlog, setNewBlog] = useState('')
   const [newAuthor, setNewAuthor] = useState('')
   const [newUrl, setNewUrl] = useState('')
-  const dispatch = useDispatch()
+  const notify = useNotify()
 
-  const addBlog = (event) => {
-    try {
-      event.preventDefault()
-      dispatch(createBlog({ title: newBlog, author: newAuthor, url: newUrl }))
-      dispatch(notify(`a new blog ${newBlog} by ${newAuthor} added`, 'success', 5000))
+  const queryClient = useQueryClient()
+
+  const newBlogMutation = useMutation({
+    mutationFn: blogService.create,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['blogs'] })
       setNewBlog('')
       setNewAuthor('')
       setNewUrl('')
-    } catch (err) {
-      console.log(err)
-      dispatch(notify('failed to add blog', 5000))
+      notify({ message: `A new blog "${newBlog}" by ${newAuthor} added`, type: 'success' })
+    },
+    onError: (error) => {
+      console.error(error)
+      notify({ message: 'Failed to add blog', type: 'error' })
     }
+  })
+
+  const addBlog = async (event) => {
+    event.preventDefault()
+    newBlogMutation.mutate({ title: newBlog, author: newAuthor, url: newUrl })
   }
 
   return (
