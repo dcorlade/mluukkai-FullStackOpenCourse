@@ -18,7 +18,6 @@ const notificationReducer = createSlice({
 export const { setNotification, removeNotification } = notificationReducer.actions
 
 export const notify = (message, type, time) => {
-  console.log('timeoutId:', timeoutId)
   return (dispatch) => {
     if (timeoutId) {
       clearTimeout(timeoutId)

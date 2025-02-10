@@ -98,37 +98,6 @@ const App = () => {
     }
   }
 
-  const updateBlog = async (id, blogObject) => {
-    try {
-      console.log('likes: ' + blogObject.likes)
-      const updatedBlog = await blogService.update(id, blogObject)
-      console.log(updatedBlog)
-      const updatedBlogs = blogs.map((blog) => (blog.id !== id ? blog : updatedBlog))
-      console.log(updatedBlogs)
-      updatedBlogs.sort((a, b) => b.likes - a.likes)
-      dispatch(notify('Updated a blog successfully', 'success', 5000))
-    } catch (error) {
-      console.log(error)
-      dispatch(notify('Failed to update blog', 'error', 5000))
-    }
-  }
-
-  const removeBlog = async (id) => {
-    try {
-      if (window.confirm('Are you sure you want to remove this blog?')) {
-        await blogService.remove(id)
-        dispatch(notify('Removed a blog successfully', 'success', 5000))
-      }
-    } catch (error) {
-      console.log(error)
-      if (error.response.data.error.includes('user not allowed')) {
-        dispatch(notify('You are not allowed to remove this blog', 'error', 5000))
-      } else {
-        dispatch(notify('Failed to remove blog', 'error', 5000))
-      }
-    }
-  }
-
   const showButton = (blog) => {
     return user && user.username === blog.user.username
   }
@@ -147,12 +116,7 @@ const App = () => {
             <h2>blogs</h2>
             {blogs.map((blog) => (
               <div key={blog.id} data-testid="blog">
-                <Blog
-                  blog={blog}
-                  updateBlog={updateBlog}
-                  removeBlog={removeBlog}
-                  showButton={showButton(blog)}
-                />
+                <Blog blogId={blog.id} showButton={showButton(blog)} />
               </div>
             ))}
           </div>

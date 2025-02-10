@@ -1,9 +1,11 @@
+import { useDispatch, useSelector } from 'react-redux'
 import Togglable from './Togglable'
-import { useState } from 'react'
+import { deleteBlog, updateBlog } from '../reducers/blogReducer'
+import { notify } from '../reducers/notificationReducer'
 
-const Blog = ({ blog, updateBlog, removeBlog, showButton }) => {
-  const [newLike, setNewLike] = useState(blog.likes)
-
+const Blog = ({ blogId, showButton }) => {
+  const blog = useSelector(({ blogs }) => blogs.find((blog) => blog.id === blogId))
+  const dispatch = useDispatch()
   const blogStyle = {
     paddingLeft: 2,
     border: 'solid',
@@ -13,15 +15,30 @@ const Blog = ({ blog, updateBlog, removeBlog, showButton }) => {
 
   const putBlog = async (event) => {
     event.preventDefault()
-    const updatedLikes = newLike + 1
-    setNewLike(updatedLikes)
-    console.log(updatedLikes)
-    await updateBlog(blog.id, { ...blog, likes: updatedLikes })
+    try {
+      await dispatch(updateBlog(blogId))
+      dispatch(notify('Liked a blog successfully', 'success', 5000))
+    } catch (e) {
+      console.log(e)
+      dispatch(notify('Failed to like blog', 'error', 5000))
+    }
   }
 
-  const deleteBlog = (event) => {
+  const removeBlog = async (event) => {
     event.preventDefault()
-    removeBlog(blog.id)
+    try {
+      if (window.confirm('Are you sure you want to remove this blog?')) {
+        await dispatch(deleteBlog(blogId))
+        dispatch(notify('Removed a blog successfully', 'success', 5000))
+      }
+    } catch (error) {
+      console.log(error)
+      if (error.response.data.error.includes('user not allowed')) {
+        dispatch(notify('You are not allowed to remove this blog', 'error', 5000))
+      } else {
+        dispatch(notify('Failed to remove blog', 'error', 5000))
+      }
+    }
   }
 
   return (
@@ -34,11 +51,11 @@ const Blog = ({ blog, updateBlog, removeBlog, showButton }) => {
           <div>
             <p>{blog.url}</p>
             <p data-testid="likes">
-              likes {newLike}
+              likes {blog.likes}
               <button onClick={putBlog}>like</button>
             </p>
             <p>{blog.user.name}</p>
-            {showButton && <button onClick={deleteBlog}>remove</button>}
+            {showButton && <button onClick={removeBlog}>remove</button>}
           </div>
         </Togglable>
       </div>
