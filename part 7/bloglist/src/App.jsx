@@ -1,17 +1,16 @@
 import { useState, useEffect, useRef } from 'react'
-import Blog from './components/Blog'
 import blogService from './services/blogs'
-import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
-import Togglable from './components/Togglable'
 import AuthForm from './components/AuthForm'
 import { notify } from './reducers/notificationReducer'
 import { useDispatch, useSelector } from 'react-redux'
 import { initializeBlogs } from './reducers/blogReducer'
 import { initializeUser, loginUser, logoutUser } from './reducers/userReducer'
+import BlogList from './components/BlogList'
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
+import UserList from './components/UserList'
 
 const App = () => {
-  const blogs = useSelector(({ blogs }) => blogs)
   const user = useSelector(({ user }) => user)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -91,26 +90,17 @@ const App = () => {
   }
 
   return (
-    <div>
+    <Router>
       <Notification />
       {authForm()}
-      {user !== null && (
-        <div>
-          <Togglable buttonLabel="new blog" ref={addBlogFormRef}>
-            <BlogForm />
-          </Togglable>
-
-          <div>
-            <h2>blogs</h2>
-            {blogs.map((blog) => (
-              <div key={blog.id} data-testid="blog">
-                <Blog blogId={blog.id} showButton={showButton(blog)} />
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
+      <Routes>
+        <Route
+          path="/"
+          element={<BlogList addBlogFormRef={addBlogFormRef} showButton={showButton} />}
+        />
+        <Route path="/users" element={<UserList />} />
+      </Routes>
+    </Router>
   )
 }
 
