@@ -5,13 +5,16 @@ import AuthForm from './components/AuthForm'
 import { notify } from './reducers/notificationReducer'
 import { useDispatch, useSelector } from 'react-redux'
 import { initializeBlogs } from './reducers/blogReducer'
-import { initializeUser, loginUser, logoutUser } from './reducers/userReducer'
+import { initializeLoggedUser, loginUser, logoutUser } from './reducers/loggedUserReducer'
 import BlogList from './components/BlogList'
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import UserList from './components/UserList'
+import User from './components/User'
+import { initializeUsers } from './reducers/usersReducer'
+import Blog from './components/Blog'
 
 const App = () => {
-  const user = useSelector(({ user }) => user)
+  const user = useSelector(({ loggedUser }) => loggedUser)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
@@ -19,7 +22,8 @@ const App = () => {
 
   useEffect(() => {
     dispatch(initializeBlogs())
-    dispatch(initializeUser())
+    dispatch(initializeLoggedUser())
+    dispatch(initializeUsers())
   }, [dispatch])
 
   useEffect(() => {
@@ -85,20 +89,15 @@ const App = () => {
     }
   }
 
-  const showButton = (blog) => {
-    return user && user.username === blog.user.username
-  }
-
   return (
     <Router>
       <Notification />
       {authForm()}
       <Routes>
-        <Route
-          path="/"
-          element={<BlogList addBlogFormRef={addBlogFormRef} showButton={showButton} />}
-        />
+        <Route path="/" element={<BlogList addBlogFormRef={addBlogFormRef} />} />
         <Route path="/users" element={<UserList />} />
+        <Route path="/users/:id" element={<User />} />
+        <Route path="/blogs/:id" element={<Blog />} />
       </Routes>
     </Router>
   )

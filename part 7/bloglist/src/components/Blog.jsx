@@ -1,16 +1,18 @@
 import { useDispatch, useSelector } from 'react-redux'
-import Togglable from './Togglable'
 import { deleteBlog, updateBlog } from '../reducers/blogReducer'
 import { notify } from '../reducers/notificationReducer'
+import { useParams } from 'react-router-dom'
 
-const Blog = ({ blogId, showButton }) => {
+const Blog = () => {
+  const user = useSelector(({ loggedUser }) => loggedUser)
+  const blogId = useParams().id
   const blog = useSelector(({ blogs }) => blogs.find((blog) => blog.id === blogId))
   const dispatch = useDispatch()
-  const blogStyle = {
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5
+
+  if (!user || !blog) return null
+
+  const showButton = (blog) => {
+    return user && user.username === blog.user.username
   }
 
   const putBlog = async (event) => {
@@ -42,22 +44,22 @@ const Blog = ({ blogId, showButton }) => {
   }
 
   return (
-    <div style={blogStyle}>
+    <div>
       <div style={{ display: 'flex', flexDirection: 'column' }}>
-        <p style={{ margin: 0 }} data-testid="title">
+        <br></br>
+        <h1 style={{ margin: 0 }} data-testid="title">
           {blog.title} {blog.author}
-        </p>
-        <Togglable buttonLabel="view">
-          <div>
-            <p>{blog.url}</p>
-            <p data-testid="likes">
-              likes {blog.likes}
-              <button onClick={putBlog}>like</button>
-            </p>
-            <p>{blog.user.name}</p>
-            {showButton && <button onClick={removeBlog}>remove</button>}
-          </div>
-        </Togglable>
+        </h1>
+        <br></br>
+        <div>
+          <a href={blog.url}>{blog.url}</a>
+          <p data-testid="likes">
+            likes {blog.likes}
+            <button onClick={putBlog}>like</button>
+          </p>
+          <p>added by {blog.user.name}</p>
+          {showButton && <button onClick={removeBlog}>remove</button>}
+        </div>
       </div>
     </div>
   )

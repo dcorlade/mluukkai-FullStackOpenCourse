@@ -2,13 +2,13 @@ import { createSlice } from '@reduxjs/toolkit'
 import userService from '../services/login'
 
 const userReducer = createSlice({
-  name: 'user',
+  name: 'loggedUser',
   initialState: null,
   reducers: {
-    setUser(state, action) {
+    setLoggedUser(state, action) {
       return action.payload
     },
-    clearUser() {
+    clearLoggedUser() {
       return null
     }
   }
@@ -21,27 +21,27 @@ export const loginUser = (username, password) => {
       password
     })
     window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
-    dispatch(setUser(user))
+    dispatch(setLoggedUser(user))
   }
 }
 
 export const logoutUser = () => {
   return async (dispatch) => {
     window.localStorage.removeItem('loggedBlogappUser')
-    dispatch(clearUser())
+    dispatch(clearLoggedUser())
   }
 }
 
-export const initializeUser = () => {
+export const initializeLoggedUser = () => {
   return async (dispatch) => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
-      dispatch(setUser(user))
+      dispatch(setLoggedUser(user))
     }
   }
 }
 
-export const { setUser, clearUser } = userReducer.actions
+export const { setLoggedUser, clearLoggedUser } = userReducer.actions
 
 export default userReducer.reducer
