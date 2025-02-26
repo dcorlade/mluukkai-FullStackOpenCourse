@@ -20,7 +20,7 @@ const blogReducer = createSlice({
     },
     removeBlog(state, action) {
       const id = action.payload
-      return state.filter((blog) => blog.id !== id)
+      state.filter((blog) => blog.id !== id)
     }
   }
 })

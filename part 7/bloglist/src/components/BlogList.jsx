@@ -19,9 +19,12 @@ const BlogList = ({ addBlogFormRef }) => {
           <div>
             <h2>blogs</h2>
             {blogs.map((blog) => (
-              <div key={blog.id} data-testid="blog">
+              <div
+                key={blog.id}
+                data-testid="blog"
+                style={{ display: 'flex', flexDirection: 'column', width: 'fit-content' }}>
                 <Link to={`blogs/${blog.id}`}>
-                  <p>
+                  <p style={{ display: 'inline-block' }}>
                     {blog.title} {blog.author}
                   </p>
                 </Link>

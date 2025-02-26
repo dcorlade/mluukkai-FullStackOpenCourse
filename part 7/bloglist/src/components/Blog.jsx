@@ -1,9 +1,10 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { deleteBlog, updateBlog } from '../reducers/blogReducer'
 import { notify } from '../reducers/notificationReducer'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 const Blog = () => {
+  const navigate = useNavigate()
   const user = useSelector(({ loggedUser }) => loggedUser)
   const blogId = useParams().id
   const blog = useSelector(({ blogs }) => blogs.find((blog) => blog.id === blogId))
@@ -11,9 +12,11 @@ const Blog = () => {
 
   if (!user || !blog) return null
 
-  const showButton = (blog) => {
+  const showButton = () => {
     return user && user.username === blog.user.username
   }
+
+  console.log(showButton())
 
   const putBlog = async (event) => {
     event.preventDefault()
@@ -32,6 +35,7 @@ const Blog = () => {
       if (window.confirm('Are you sure you want to remove this blog?')) {
         await dispatch(deleteBlog(blogId))
         dispatch(notify('Removed a blog successfully', 'success', 5000))
+        navigate('/')
       }
     } catch (error) {
       console.log(error)
@@ -45,9 +49,9 @@ const Blog = () => {
 
   return (
     <div>
-      <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <div>
         <br></br>
-        <h1 style={{ margin: 0 }} data-testid="title">
+        <h1 style={{ marginRight: 'auto' }} data-testid="title">
           {blog.title} {blog.author}
         </h1>
         <br></br>
@@ -58,7 +62,7 @@ const Blog = () => {
             <button onClick={putBlog}>like</button>
           </p>
           <p>added by {blog.user.name}</p>
-          {showButton && <button onClick={removeBlog}>remove</button>}
+          {showButton() && <button onClick={removeBlog}>remove</button>}
         </div>
       </div>
     </div>
