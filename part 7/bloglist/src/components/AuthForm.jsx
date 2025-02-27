@@ -1,29 +1,34 @@
+import { Button, TextField } from '@mui/material'
 import PropTypes from 'prop-types'
 
 const AuthForm = ({ handleSubmit, handleChange, values }) => {
   return (
     <form onSubmit={handleSubmit}>
-      <div>
-        username
-        <input
-          type="text"
-          data-testid="username"
-          value={values.username}
+      <div style={{ marginBottom: 7 }}>
+        <TextField
           name="Username"
+          label="username"
+          size="small"
+          value={values.username}
           onChange={handleChange}
         />
       </div>
-      <div>
-        password
-        <input
-          type="password"
-          data-testid="password"
-          value={values.password}
+      <div style={{ marginBottom: 7 }}>
+        <TextField
           name="Password"
+          label="password"
+          size="small"
+          value={values.password}
           onChange={handleChange}
+          type="password"
         />
       </div>
-      <button type="submit">login</button>
+
+      <div>
+        <Button variant="contained" color="primary" type="submit">
+          login
+        </Button>
+      </div>
     </form>
   )
 }

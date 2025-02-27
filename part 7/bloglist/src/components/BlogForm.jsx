@@ -9,10 +9,10 @@ const BlogForm = () => {
   const [newUrl, setNewUrl] = useState('')
   const dispatch = useDispatch()
 
-  const addBlog = (event) => {
+  const addBlog = async (event) => {
     try {
       event.preventDefault()
-      dispatch(createBlog({ title: newBlog, author: newAuthor, url: newUrl }))
+      await dispatch(createBlog({ title: newBlog, author: newAuthor, url: newUrl }))
       dispatch(notify(`a new blog ${newBlog} by ${newAuthor} added`, 'success', 5000))
       setNewBlog('')
       setNewAuthor('')

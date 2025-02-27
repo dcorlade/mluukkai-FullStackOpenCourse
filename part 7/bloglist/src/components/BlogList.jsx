@@ -2,6 +2,7 @@ import { useSelector } from 'react-redux'
 import Togglable from './Togglable'
 import BlogForm from './BlogForm'
 import { Link } from 'react-router-dom'
+import { Paper, Table, TableBody, TableCell, TableContainer, TableRow } from '@mui/material'
 
 const BlogList = ({ addBlogFormRef }) => {
   const blogs = useSelector(({ blogs }) => blogs)
@@ -16,20 +17,20 @@ const BlogList = ({ addBlogFormRef }) => {
             <BlogForm />
           </Togglable>
 
-          <div>
-            {blogs.map((blog) => (
-              <div
-                key={blog.id}
-                data-testid="blog"
-                style={{ display: 'flex', flexDirection: 'column', width: 'fit-content' }}>
-                <Link to={`blogs/${blog.id}`}>
-                  <p style={{ display: 'inline-block' }}>
-                    {blog.title} {blog.author}
-                  </p>
-                </Link>
-              </div>
-            ))}
-          </div>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableBody>
+                {blogs.map((blog) => (
+                  <TableRow key={blog.id} data-testid="blog">
+                    <TableCell>
+                      <Link to={`blogs/${blog.id}`}>{blog.title}</Link>
+                    </TableCell>
+                    <TableCell align="right">{blog.author}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </div>
       )}
     </div>

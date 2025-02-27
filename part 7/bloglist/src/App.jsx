@@ -12,6 +12,7 @@ import UserList from './components/UserList'
 import User from './components/User'
 import { initializeUsers } from './reducers/usersReducer'
 import Blog from './components/Blog'
+import { AppBar, Button, Toolbar } from '@mui/material'
 
 const App = () => {
   const user = useSelector(({ loggedUser }) => loggedUser)
@@ -21,9 +22,12 @@ const App = () => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    dispatch(initializeBlogs())
-    dispatch(initializeLoggedUser())
-    dispatch(initializeUsers())
+    const fetchData = async () => {
+      await dispatch(initializeBlogs())
+      await dispatch(initializeLoggedUser())
+      await dispatch(initializeUsers())
+    }
+    fetchData()
   }, [dispatch])
 
   useEffect(() => {
@@ -55,7 +59,9 @@ const App = () => {
     <div>
       <form onSubmit={handleLogout} style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
         <p>{user.name} logged in</p>
-        <button type="submit">logout</button>
+        <Button color="inherit" type="submit">
+          logout
+        </Button>
       </form>
     </div>
   )
@@ -64,7 +70,7 @@ const App = () => {
     event.preventDefault()
 
     try {
-      dispatch(loginUser(username, password))
+      await dispatch(loginUser(username, password))
       setUsername('')
       setPassword('')
       dispatch(notify('Logged in successfully', 'success', 5000))
@@ -90,18 +96,20 @@ const App = () => {
 
   return (
     <Router>
-      <div
-        style={{
-          display: 'flex',
-          gap: '5px',
-          alignItems: 'center',
-          background: '#E0E0E0',
-          height: '25px'
-        }}>
-        <Link to="/">blogs</Link>
-        <Link to="/users">users</Link>
-        {user && logoutForm()}
-      </div>
+      <AppBar position="static">
+        <Toolbar>
+          <div style={{ display: 'flex', gap: '1em' }}>
+            <Button color="inherit" component={Link} to="/">
+              blogs
+            </Button>
+            <Button color="inherit" component={Link} to="/users">
+              users
+            </Button>
+          </div>
+          <div style={{ marginLeft: 'auto' }}>{user && logoutForm()}</div>
+        </Toolbar>
+      </AppBar>
+
       <Notification />
 
       <Routes>

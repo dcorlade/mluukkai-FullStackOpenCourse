@@ -2,6 +2,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { deleteBlog, updateBlog } from '../reducers/blogReducer'
 import { notify } from '../reducers/notificationReducer'
 import { useNavigate, useParams } from 'react-router-dom'
+import Comments from './Comments'
 
 const Blog = () => {
   const navigate = useNavigate()
@@ -15,8 +16,6 @@ const Blog = () => {
   const showButton = () => {
     return user && user.username === blog.user.username
   }
-
-  console.log(showButton())
 
   const putBlog = async (event) => {
     event.preventDefault()
@@ -64,6 +63,7 @@ const Blog = () => {
           <p>added by {blog.user.name}</p>
           {showButton() && <button onClick={removeBlog}>remove</button>}
         </div>
+        <Comments blog={blog} />
       </div>
     </div>
   )
