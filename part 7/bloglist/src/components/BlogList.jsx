@@ -9,7 +9,7 @@ const BlogList = ({ addBlogFormRef }) => {
 
   return (
     <div>
-      <h1>blogs</h1>
+      <h1>blogs app</h1>
       {user !== null && (
         <div>
           <Togglable buttonLabel="new blog" ref={addBlogFormRef}>
@@ -17,7 +17,6 @@ const BlogList = ({ addBlogFormRef }) => {
           </Togglable>
 
           <div>
-            <h2>blogs</h2>
             {blogs.map((blog) => (
               <div
                 key={blog.id}

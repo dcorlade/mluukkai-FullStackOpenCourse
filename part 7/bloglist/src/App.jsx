@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { initializeBlogs } from './reducers/blogReducer'
 import { initializeLoggedUser, loginUser, logoutUser } from './reducers/loggedUserReducer'
 import BlogList from './components/BlogList'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 import UserList from './components/UserList'
 import User from './components/User'
 import { initializeUsers } from './reducers/usersReducer'
@@ -40,26 +40,25 @@ const App = () => {
     if (name === 'Password') setPassword(value)
   }
 
-  const authForm = () =>
-    user === null ? (
-      <div>
-        <h2>Log in to the application</h2>
-        <AuthForm
-          handleSubmit={handleLogin}
-          handleChange={handleChange}
-          values={{ username, password }}
-        />
-      </div>
-    ) : (
-      <div>
-        <form onSubmit={handleLogout}>
-          <p style={{ display: 'inline', marginRight: '10px' }}>{user.name} logged in</p>
-          <button type="submit" style={{ display: 'inline' }}>
-            logout
-          </button>
-        </form>
-      </div>
-    )
+  const loginForm = () => (
+    <div>
+      <h2>Log in to the application</h2>
+      <AuthForm
+        handleSubmit={handleLogin}
+        handleChange={handleChange}
+        values={{ username, password }}
+      />
+    </div>
+  )
+
+  const logoutForm = () => (
+    <div>
+      <form onSubmit={handleLogout} style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+        <p>{user.name} logged in</p>
+        <button type="submit">logout</button>
+      </form>
+    </div>
+  )
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -91,10 +90,25 @@ const App = () => {
 
   return (
     <Router>
+      <div
+        style={{
+          display: 'flex',
+          gap: '5px',
+          alignItems: 'center',
+          background: '#E0E0E0',
+          height: '25px'
+        }}>
+        <Link to="/">blogs</Link>
+        <Link to="/users">users</Link>
+        {user && logoutForm()}
+      </div>
       <Notification />
-      {authForm()}
+
       <Routes>
-        <Route path="/" element={<BlogList addBlogFormRef={addBlogFormRef} />} />
+        <Route
+          path="/"
+          element={user ? <BlogList addBlogFormRef={addBlogFormRef} /> : loginForm()}
+        />
         <Route path="/users" element={<UserList />} />
         <Route path="/users/:id" element={<User />} />
         <Route path="/blogs/:id" element={<Blog />} />
