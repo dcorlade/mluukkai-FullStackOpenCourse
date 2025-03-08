@@ -47,3 +47,13 @@ export const UPDATE_AUTHOR = gql`
     }
   }
 `
+
+// export const CREATE_USER = gql`
+//   mutation CreateUser($username: String!, $favoriteGenre: !String) {
+//     createUser(username: $username, favoriteGenre: $favoriteGenre) {
+//       username
+//       favoriteGenre
+//       id
+//     }
+//   }
+// `
