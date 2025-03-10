@@ -211,7 +211,7 @@ const resolvers = {
 const server = new ApolloServer({
   typeDefs,
   resolvers
-})
+ })
 
 startStandaloneServer(server, {
   listen: { port: 4000 },
