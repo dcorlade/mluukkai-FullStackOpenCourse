@@ -10,7 +10,28 @@ const NewBook = (props) => {
   const [genres, setGenres] = useState([])
 
   const [createBook] = useMutation(CREATE_BOOK, {
-    refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }]
+    update: (cache, response) => {
+      cache.updateQuery({ query: ALL_BOOKS }, ({ allBooks }) => {
+        return {
+          allBooks: allBooks.concat(response.data.addPerson)
+        }
+      })
+    },
+    refetchQueries: [
+      // {
+      //   query: ALL_BOOKS,
+      //   variables: { genre: null } // Refetch unfiltered books
+      // },
+      // {
+      //   query: ALL_BOOKS // Also refetch the filtered view if any
+      // },
+      {
+        query: ALL_AUTHORS
+      }
+    ],
+    onError: (error) => {
+      console.log(error)
+    }
   })
 
   if (!props.show) {

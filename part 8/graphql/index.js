@@ -100,7 +100,6 @@ const resolvers = {
       if (args.genre) {
         filter.genres = { $in: [args.genre] }
       }
-      console.log(filter)
       return Book.find(filter).populate('author')
     },
     allAuthors: async () => Author.find({}),

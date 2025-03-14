@@ -14,6 +14,7 @@ const LoginForm = ({ setToken, show }) => {
       const token = result.data.login.value
       setToken(token)
       localStorage.setItem('books-user-token', token)
+      setShowForm(true)
     }
   }, [result.data, setToken])
 
