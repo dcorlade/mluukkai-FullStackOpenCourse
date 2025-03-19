@@ -22,7 +22,9 @@ const Books = (props) => {
     return <div>loading...</div>
   }
 
-  const genres = [...new Set(filterAllBooks.data.allBooks.flatMap((book) => book.genres))].sort()
+  const genres = [...new Set(filterAllBooks.data.allBooks.flatMap((book) => book.genres))]
+    .sort()
+    .filter((genre) => genre != '')
 
   const filterBooks = (genre) => {
     setSelectedGenre(genre)
