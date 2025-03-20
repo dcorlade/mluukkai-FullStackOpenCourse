@@ -20,6 +20,7 @@ loginRouter.post('/', async (request, response) => {
   const userForToken = {
     username: user.username,
     id: user._id,
+    role: user.role
   }
 
   // token expires in 60*60 seconds, that is, in one hour

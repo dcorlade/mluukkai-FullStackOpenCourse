@@ -5,16 +5,21 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     minLength: 3,
-    unique: true // this ensures the uniqueness of username
+    unique: true
   },
-  name: String,
   passwordHash: String,
-  blogs: [
-    {
+  role: {
+    type: String,
+    enum: ['admin', 'client'],
+    default: 'client'
+  },
+  cart: [{
+    product: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Blog'
-    }
-  ],
+      ref: 'Product'
+    },
+    quantity: Number
+  }]
 })
 
 userSchema.set('toJSON', {

@@ -64,10 +64,19 @@ const userExtractor = async (request, response, next) => {
   next()
 }
 
+const adminRequired = async (request, response, next) => {
+  const user = request.user
+  if (!user || user.role !== 'admin') {
+    return response.status(401).json({ error: 'admin rights required' })
+  }
+  next()
+}
+
 
 module.exports = {
   requestLogger,
   unknownEndpoint,
   errorHandler,
-  userExtractor
+  userExtractor,
+  adminRequired
 }
