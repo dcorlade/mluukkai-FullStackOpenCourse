@@ -45,7 +45,7 @@ const getTokenFrom = request => {
 const userExtractor = async (request, response, next) => {
   const token = getTokenFrom(request)
   if (!token) {
-    return response.status(401).json({ error: 'token missimg' })
+    return response.status(401).json({ error: 'token missing' })
   }
 
   const decodedToken = jwt.verify(token, process.env.SECRET)

@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import userService from '../services/login'
 
-const userReducer = createSlice({
+const loggedUserReducer = createSlice({
   name: 'loggedUser',
   initialState: null,
   reducers: {
@@ -33,6 +33,7 @@ export const logoutUser = () => {
 }
 
 export const initializeLoggedUser = () => {
+  console.log('initiliasing logged user')
   return async (dispatch) => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
@@ -42,6 +43,6 @@ export const initializeLoggedUser = () => {
   }
 }
 
-export const { setLoggedUser, clearLoggedUser } = userReducer.actions
+export const { setLoggedUser, clearLoggedUser } = loggedUserReducer.actions
 
-export default userReducer.reducer
+export default loggedUserReducer.reducer

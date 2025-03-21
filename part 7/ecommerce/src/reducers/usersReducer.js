@@ -12,6 +12,7 @@ const usersReducer = createSlice({
 })
 
 export const initializeUsers = () => {
+  console.log('initialise all users')
   return async (dispatch) => {
     const users = await usersService.getUsers()
     dispatch(setUsers(users))

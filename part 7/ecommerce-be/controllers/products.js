@@ -22,7 +22,6 @@ productsRouter.get('/:id', async (request, response) => {
 productsRouter.post('/', userExtractor, adminRequired, async (request, response) => {
   const product = new Product(request.body)
 
-
   if (request.body.price < 0 || request.body.stock < 0) {
     return response.status(400).json({ error: 'price and stock must be non-negative' })
   }
@@ -32,11 +31,11 @@ productsRouter.post('/', userExtractor, adminRequired, async (request, response)
 })
 
 productsRouter.put('/:id', userExtractor, adminRequired, async (request, response) => {
-  const { title, description, price, stock, category } = request.body
+  const { provider, title, description, price, stock, category } = request.body
 
   const updatedProduct = await Product.findByIdAndUpdate(
     request.params.id,
-    { title, description, price, stock, category },
+    { provider, title, description, price, stock, category },
     { new: true, runValidators: true }
   )
 

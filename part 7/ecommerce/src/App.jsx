@@ -1,18 +1,19 @@
-import { useState, useEffect, useRef } from 'react'
-import blogService from './services/blogs'
+import { useState, useEffect } from 'react'
+import productService from './services/products'
 import Notification from './components/Notification'
 import AuthForm from './components/AuthForm'
 import { notify } from './reducers/notificationReducer'
 import { useDispatch, useSelector } from 'react-redux'
-import { initializeBlogs } from './reducers/blogReducer'
 import { initializeLoggedUser, loginUser, logoutUser } from './reducers/loggedUserReducer'
-import BlogList from './components/BlogList'
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom'
 import UserList from './components/UserList'
 import User from './components/User'
 import { initializeUsers } from './reducers/usersReducer'
 import Blog from './components/Blog'
 import { AppBar, Button, Toolbar } from '@mui/material'
+import Products from './components/Products'
+import ProductForm from './components/ProductForm'
+import { initializeProducts } from './reducers/productReducer'
 
 const App = () => {
   const user = useSelector(({ loggedUser }) => loggedUser)
@@ -23,7 +24,8 @@ const App = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      await dispatch(initializeBlogs())
+      // await dispatch(initializeBlogs())
+      await dispatch(initializeProducts())
       await dispatch(initializeLoggedUser())
       await dispatch(initializeUsers())
     }
@@ -32,11 +34,9 @@ const App = () => {
 
   useEffect(() => {
     if (user) {
-      blogService.setToken(user.token)
+      productService.setToken(user.token)
     }
   }, [user])
-
-  const addBlogFormRef = useRef()
 
   const handleChange = (event) => {
     const { name, value } = event.target
@@ -113,9 +113,10 @@ const App = () => {
       <Notification />
 
       <Routes>
+        <Route path="/" element={user ? <Products /> : loginForm()} />
         <Route
-          path="/"
-          element={user ? <BlogList addBlogFormRef={addBlogFormRef} /> : loginForm()}
+          path="add-product"
+          element={user?.role === 'admin' ? <ProductForm /> : <Navigate to="/" />}
         />
         <Route path="/users" element={<UserList />} />
         <Route path="/users/:id" element={<User />} />
