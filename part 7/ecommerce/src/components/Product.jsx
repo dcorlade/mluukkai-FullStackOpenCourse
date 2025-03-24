@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import {
   Container,
   Typography,
@@ -10,16 +10,31 @@ import {
   Box,
   Chip
 } from '@mui/material'
+import { notify } from '../reducers/notificationReducer'
+import { deleteProduct } from '../reducers/productReducer'
 
 const Product = () => {
   const { id } = useParams()
   const navigate = useNavigate()
+  const dispatch = useDispatch()
 
   const product = useSelector((state) => state.products.find((p) => p.id === id))
   const user = useSelector((state) => state.loggedUser)
 
   if (!product) {
     return null
+  }
+
+  const removeProduct = (event) => {
+    event.preventDefault()
+
+    try {
+      dispatch(deleteProduct(id))
+      dispatch(notify('Deleted product successfully', 5000))
+      navigate('/')
+    } catch (err) {
+      dispatch(notify('Failed to delete the product', 5000))
+    }
   }
 
   return (
@@ -30,8 +45,8 @@ const Product = () => {
 
       <Card>
         <CardContent>
-          <Grid container spacing={20}>
-            <Grid>
+          <Grid container spacing={4}>
+            <Grid size={{ xs: 12, md: 8 }}>
               <Typography variant="h4" gutterBottom>
                 {product.title}
               </Typography>
@@ -69,14 +84,14 @@ const Product = () => {
                   }}
                 />
               </Box>
-              <Typography variant="body1" component={'div'}>
+              <Typography variant="body1" component={'div'} sx={{ mt: 2 }}>
                 {product.description}
               </Typography>
             </Grid>
-            <Grid>
+            <Grid size={{ xs: 12, md: 4 }}>
               <Box
                 sx={{
-                  p: 2,
+                  p: 4,
                   border: '1px solid #e0e0e0',
                   borderRadius: 1
                 }}>
@@ -99,6 +114,16 @@ const Product = () => {
                     sx={{ mt: 1 }}
                     onClick={() => navigate(`/edit-product/${product.id}`)}>
                     Edit Product
+                  </Button>
+                )}
+                {user?.role === 'admin' && (
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    fullWidth
+                    sx={{ mt: 1 }}
+                    onClick={removeProduct}>
+                    Delete Product
                   </Button>
                 )}
               </Box>

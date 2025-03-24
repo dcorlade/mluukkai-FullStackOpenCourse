@@ -44,7 +44,7 @@ productsRouter.put('/:id', userExtractor, adminRequired, async (request, respons
 
 productsRouter.delete('/:id', userExtractor, adminRequired, async (request, response) => {
 
-  await Product.findByIdAndRemove(request.params.id)
+  await Product.findByIdAndDelete(request.params.id)
   response.status(204).end()
 })
 

@@ -13,7 +13,7 @@ const productReducer = createSlice({
     },
     removeProduct(state, action) {
       const id = action.payload
-      state.filter((product) => product.id !== id)
+      return state.filter((product) => product.id !== id)
     },
     updateProduct(state, action) {
       const updatedProduct = action.payload
@@ -41,8 +41,15 @@ export const editProduct = (id, product) => {
   console.log('updating product...')
   return async (dispatch) => {
     const updatedProduct = await productService.update(id, product)
-    console.log(updatedProduct)
     dispatch(updateProduct(updatedProduct))
+  }
+}
+
+export const deleteProduct = (id) => {
+  console.log('deleting product...')
+  return async (dispatch) => {
+    await productService.remove(id)
+    dispatch(removeProduct(id))
   }
 }
 

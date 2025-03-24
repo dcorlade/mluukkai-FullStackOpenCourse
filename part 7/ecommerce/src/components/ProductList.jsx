@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import {
   Table,
   TableBody,
@@ -14,6 +14,7 @@ import {
 const ProductList = () => {
   const products = useSelector((state) => state.products)
   const user = useSelector((state) => state.loggedUser)
+  const navigate = useNavigate()
 
   return (
     <div>
@@ -41,13 +42,18 @@ const ProductList = () => {
           </TableHead>
           <TableBody>
             {products.map((product) => (
-              <TableRow key={product.id}>
+              <TableRow
+                key={product.id}
+                hover
+                sx={{
+                  cursor: 'pointer',
+                  '&:hover td': { backgroundColor: 'grey.100' }
+                }}
+                onClick={() => navigate(`/products/${product.id}`)}>
                 <TableCell>{product.provider}</TableCell>
-                <TableCell>
-                  <Link to={`/products/${product.id}`}>{product.title}</Link>
-                </TableCell>
+                <TableCell>{product.title}</TableCell>
                 <TableCell align="right">{product.price} RON</TableCell>
-                <TableCell align="right">
+                <TableCell align="right" onClick={(e) => e.stopPropagation()}>
                   <Button variant="contained" color="primary" size="small">
                     Add to Cart
                   </Button>
