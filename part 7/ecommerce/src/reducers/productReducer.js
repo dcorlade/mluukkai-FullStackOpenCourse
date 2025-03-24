@@ -6,7 +6,6 @@ const productReducer = createSlice({
   initialState: [],
   reducers: {
     setProducts(state, action) {
-      console.log('HEY')
       return action.payload
     },
     appendProduct(state, action) {
@@ -35,6 +34,15 @@ export const createProduct = (product) => {
   return async (dispatch) => {
     const newProduct = await productService.create(product)
     dispatch(appendProduct(newProduct))
+  }
+}
+
+export const editProduct = (id, product) => {
+  console.log('updating product...')
+  return async (dispatch) => {
+    const updatedProduct = await productService.update(id, product)
+    console.log(updatedProduct)
+    dispatch(updateProduct(updatedProduct))
   }
 }
 

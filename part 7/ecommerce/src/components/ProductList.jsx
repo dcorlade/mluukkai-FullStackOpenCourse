@@ -24,7 +24,7 @@ const ProductList = () => {
           to="/add-product"
           variant="contained"
           color="primary"
-          style={{ marginBottom: 20 }}>
+          sx={{ mb: 2 }}>
           Add New Product
         </Button>
       )}

@@ -73,7 +73,7 @@ const Product = () => {
                 {product.description}
               </Typography>
             </Grid>
-            <Grid item xs={12} md={4}>
+            <Grid>
               <Box
                 sx={{
                   p: 2,

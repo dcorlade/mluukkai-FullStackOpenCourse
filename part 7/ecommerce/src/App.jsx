@@ -9,9 +9,10 @@ import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-ro
 import { initializeUsers } from './reducers/usersReducer'
 import { AppBar, Button, Toolbar } from '@mui/material'
 import ProductList from './components/ProductList'
-import ProductForm from './components/AddProductForm'
 import { initializeProducts } from './reducers/productReducer'
 import Product from './components/Product'
+import AddProductForm from './components/AddProductForm'
+import EditProductForm from './components/EditProductForm'
 
 const App = () => {
   const user = useSelector(({ loggedUser }) => loggedUser)
@@ -110,7 +111,11 @@ const App = () => {
         <Route path="/" element={user ? <ProductList /> : loginForm()} />
         <Route
           path="add-product"
-          element={user?.role === 'admin' ? <ProductForm /> : <Navigate to="/" />}
+          element={user?.role === 'admin' ? <AddProductForm /> : <Navigate to="/" />}
+        />
+        <Route
+          path="edit-product/:id"
+          element={user?.role === 'admin' ? <EditProductForm /> : <Navigate to="/" />}
         />
         {/* <Route path="/users" element={<UserList />} />
         <Route path="/users/:id" element={<User />} /> */}

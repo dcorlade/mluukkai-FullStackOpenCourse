@@ -30,7 +30,6 @@ const ProductForm = ({ product, onSubmit, formTitle }) => {
 
   const handleChange = (event) => {
     const { name, value } = event.target
-    console.log(name, ' ', value)
     setProductData((prev) => ({
       ...prev,
       [name]: value
@@ -39,17 +38,17 @@ const ProductForm = ({ product, onSubmit, formTitle }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault()
-    const productData = {
+    const newProductData = {
       ...productData,
       price: Number(productData.price),
       stock: Number(productData.stock)
     }
-    await onSubmit(productData)
+    await onSubmit(newProductData)
   }
 
   return (
     <Container maxWidth="sm">
-      <Typography variant="h4" gutterBottom>
+      <Typography variant="h4" gutterBottom sx={{ mt: 3 }}>
         {formTitle}
       </Typography>
       <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
