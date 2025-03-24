@@ -11,7 +11,7 @@ import {
   Button
 } from '@mui/material'
 
-const Products = () => {
+const ProductList = () => {
   const products = useSelector((state) => state.products)
   const user = useSelector((state) => state.loggedUser)
 
@@ -61,4 +61,4 @@ const Products = () => {
   )
 }
 
-export default Products
+export default ProductList

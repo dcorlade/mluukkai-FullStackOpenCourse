@@ -1,100 +1,131 @@
-import { useState } from 'react'
-import { createProduct } from '../reducers/productReducer'
-import { useDispatch } from 'react-redux'
-import { notify } from '../reducers/notificationReducer'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button, TextField, Container, Typography, Box } from '@mui/material'
 
-const ProductForm = () => {
-  const [provider, setProvider] = useState('')
-  const [title, setTitle] = useState('')
-  const [description, setDescription] = useState('')
-  const [price, setPrice] = useState('')
-  const [stock, setStock] = useState('')
-  const [category, setCategory] = useState('')
-
-  const dispatch = useDispatch()
+const ProductForm = ({ product, onSubmit, formTitle }) => {
   const navigate = useNavigate()
+  const [productData, setProductData] = useState({
+    provider: '',
+    title: '',
+    description: '',
+    price: '',
+    stock: '',
+    category: '',
+    imageUrl: ''
+  })
 
-  const addProduct = async (event) => {
-    try {
-      event.preventDefault()
-      await dispatch(
-        createProduct({
-          provider,
-          title,
-          description,
-          price: Number(price),
-          stock: Number(stock),
-          category
-        })
-      )
-      dispatch(notify('Product was added successfully!'))
-      navigate('/')
-    } catch (error) {
-      dispatch(notify('Failed to add new product', 5000))
+  useEffect(() => {
+    if (product) {
+      setProductData({
+        provider: product.provider || '',
+        title: product.title || '',
+        description: product.description || '',
+        price: product.price || '',
+        stock: product.stock || '',
+        category: product.category || '',
+        imageUrl: product.imageUrl || ''
+      })
     }
+  }, [product])
+
+  const handleChange = (event) => {
+    const { name, value } = event.target
+    console.log(name, ' ', value)
+    setProductData((prev) => ({
+      ...prev,
+      [name]: value
+    }))
+  }
+
+  const handleSubmit = async (event) => {
+    event.preventDefault()
+    const productData = {
+      ...productData,
+      price: Number(productData.price),
+      stock: Number(productData.stock)
+    }
+    await onSubmit(productData)
   }
 
   return (
     <Container maxWidth="sm">
       <Typography variant="h4" gutterBottom>
-        Add New Product
+        {formTitle}
       </Typography>
-      <Box component="form" onSubmit={addProduct} sx={{ mt: 3 }}>
+      <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
         <TextField
           fullWidth
+          name="provider"
           label="Provider"
-          value={provider}
-          onChange={({ target }) => setProvider(target.value)}
+          value={productData.provider}
+          onChange={handleChange}
           margin="normal"
           required
         />
         <TextField
           fullWidth
+          name="title"
           label="Title"
-          value={title}
-          onChange={({ target }) => setTitle(target.value)}
+          value={productData.title}
+          onChange={handleChange}
           margin="normal"
           required
         />
         <TextField
           fullWidth
+          name="description"
           label="Description"
-          value={description}
-          onChange={({ target }) => setDescription(target.value)}
+          value={productData.description}
+          onChange={handleChange}
           margin="normal"
           multiline
           rows={4}
         />
         <TextField
           fullWidth
+          name="price"
           label="Price"
           type="number"
-          value={price}
-          onChange={({ target }) => setPrice(target.value)}
+          value={productData.price}
+          onChange={handleChange}
           margin="normal"
           required
         />
         <TextField
           fullWidth
+          name="stock"
           label="Stock"
           type="number"
-          value={stock}
-          onChange={({ target }) => setStock(target.value)}
+          value={productData.stock}
+          onChange={handleChange}
           margin="normal"
           required
         />
         <TextField
           fullWidth
+          name="category"
           label="Category"
-          value={category}
-          onChange={({ target }) => setCategory(target.value)}
+          value={productData.category}
+          onChange={handleChange}
           margin="normal"
         />
-        <Box sx={{ mt: 2 }}>
+        <TextField
+          fullWidth
+          name="imageUrl"
+          label="Image URL"
+          value={productData.imageUrl}
+          onChange={handleChange}
+          margin="normal"
+        />
+        <Box sx={{ mt: 2, display: 'flex', gap: 2 }}>
           <Button variant="contained" color="primary" type="submit" fullWidth>
-            Add Product
+            {product ? 'Update Product' : 'Add Product'}
+          </Button>
+          <Button
+            variant="outlined"
+            onClick={() => navigate(product ? `/products/${product.id}` : '/')}
+            fullWidth>
+            Cancel
           </Button>
         </Box>
       </Box>

@@ -6,14 +6,12 @@ import { notify } from './reducers/notificationReducer'
 import { useDispatch, useSelector } from 'react-redux'
 import { initializeLoggedUser, loginUser, logoutUser } from './reducers/loggedUserReducer'
 import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom'
-import UserList from './components/UserList'
-import User from './components/User'
 import { initializeUsers } from './reducers/usersReducer'
-import Blog from './components/Blog'
 import { AppBar, Button, Toolbar } from '@mui/material'
-import Products from './components/Products'
-import ProductForm from './components/ProductForm'
+import ProductList from './components/ProductList'
+import ProductForm from './components/AddProductForm'
 import { initializeProducts } from './reducers/productReducer'
+import Product from './components/Product'
 
 const App = () => {
   const user = useSelector(({ loggedUser }) => loggedUser)
@@ -24,7 +22,6 @@ const App = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      // await dispatch(initializeBlogs())
       await dispatch(initializeProducts())
       await dispatch(initializeLoggedUser())
       await dispatch(initializeUsers())
@@ -100,10 +97,7 @@ const App = () => {
         <Toolbar>
           <div style={{ display: 'flex', gap: '1em' }}>
             <Button color="inherit" component={Link} to="/">
-              blogs
-            </Button>
-            <Button color="inherit" component={Link} to="/users">
-              users
+              products
             </Button>
           </div>
           <div style={{ marginLeft: 'auto' }}>{user && logoutForm()}</div>
@@ -113,14 +107,14 @@ const App = () => {
       <Notification />
 
       <Routes>
-        <Route path="/" element={user ? <Products /> : loginForm()} />
+        <Route path="/" element={user ? <ProductList /> : loginForm()} />
         <Route
           path="add-product"
           element={user?.role === 'admin' ? <ProductForm /> : <Navigate to="/" />}
         />
-        <Route path="/users" element={<UserList />} />
-        <Route path="/users/:id" element={<User />} />
-        <Route path="/blogs/:id" element={<Blog />} />
+        {/* <Route path="/users" element={<UserList />} />
+        <Route path="/users/:id" element={<User />} /> */}
+        <Route path="/products/:id" element={<Product />} />
       </Routes>
     </Router>
   )

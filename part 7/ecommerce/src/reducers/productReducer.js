@@ -6,6 +6,7 @@ const productReducer = createSlice({
   initialState: [],
   reducers: {
     setProducts(state, action) {
+      console.log('HEY')
       return action.payload
     },
     appendProduct(state, action) {

@@ -20,6 +20,7 @@ const productSchema = new mongoose.Schema({
     min: 0
   },
   category: String,
+  imageUrl: String
 })
 
 productSchema.set('toJSON', {
