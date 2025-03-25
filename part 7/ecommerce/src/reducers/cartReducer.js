@@ -10,7 +10,10 @@ const cartReducer = createSlice({
     },
     appendToCart(state, action) {
       const id = action.payload.product.id
-      const existingItem = state.find((item) => item.product.id === id)
+
+      const existingItem = state.find((item) => {
+        item.product.id === id
+      })
       if (existingItem) {
         return state.map((item) =>
           item.product.id === id
@@ -18,8 +21,7 @@ const cartReducer = createSlice({
             : item
         )
       }
-      console.log([...state, action.payload])
-      return [...state, action.payload]
+      state.push(action.payload)
     },
     removeFromCart(state, action) {
       return state.filter((item) => item.product.id !== action.payload)
@@ -38,17 +40,10 @@ const cartReducer = createSlice({
 })
 
 export const addToCart = (product, quantity) => {
-  return (dispatch, getState) => {
-    const { cart } = getState()
-    const currProduct = cart.find((p) => p.product.id === product.id)
-    const currQuantity = currProduct ? currProduct.quantity : 0
-
-    if (product.stock < currQuantity + quantity) {
-      dispatch(notify('Not enough stock for this product'))
-      return
-    }
-
-    dispatch(appendToCart({ product, quantity }))
+  return (dispatch) => {
+    const itemToAdd = { product, quantity }
+    console.log('quantity ' + quantity)
+    dispatch(appendToCart(itemToAdd))
     dispatch(notify('Product was added to cart!'))
   }
 }

@@ -13,11 +13,13 @@ import { initializeProducts } from './reducers/productReducer'
 import Product from './components/Product'
 import AddProductForm from './components/AddProductForm'
 import EditProductForm from './components/EditProductForm'
+import Cart from './components/Cart'
 
 const App = () => {
   const user = useSelector(({ loggedUser }) => loggedUser)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const cart = useSelector((state) => state.cart)
 
   const dispatch = useDispatch()
 
@@ -96,11 +98,14 @@ const App = () => {
     <Router>
       <AppBar position="static">
         <Toolbar>
-          <div style={{ display: 'flex', gap: '1em' }}>
-            <Button color="inherit" component={Link} to="/">
-              products
+          <Button color="inherit" component={Link} to="/">
+            Products
+          </Button>
+          {user && (
+            <Button color="inherit" component={Link} to="/cart">
+              Cart ({cart.length})
             </Button>
-          </div>
+          )}
           <div style={{ marginLeft: 'auto' }}>{user && logoutForm()}</div>
         </Toolbar>
       </AppBar>
@@ -117,6 +122,8 @@ const App = () => {
           path="edit-product/:id"
           element={user?.role === 'admin' ? <EditProductForm /> : <Navigate to="/" />}
         />
+
+        <Route path="/cart" element={user ? <Cart /> : <Navigate to="/" />} />
 
         <Route path="/products/:id" element={<Product />} />
       </Routes>

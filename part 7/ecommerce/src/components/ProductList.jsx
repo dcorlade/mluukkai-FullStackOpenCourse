@@ -8,20 +8,38 @@ import {
   Button,
   Typography,
   Grid2 as Grid,
-  Box
+  Box,
+  IconButton,
+  TextField,
+  ButtonGroup
 } from '@mui/material'
 import { addToCart } from '../reducers/cartReducer'
+import { useState } from 'react'
+import AddIcon from '@mui/icons-material/Add'
+import RemoveIcon from '@mui/icons-material/Remove'
 
 const ProductList = () => {
   const products = useSelector((state) => state.products)
   const user = useSelector((state) => state.loggedUser)
-  // const dispatch = useDispatch()
+  const [quantities, setQuantities] = useState({})
+
+  const dispatch = useDispatch()
   const navigate = useNavigate()
 
-  // const addProductToCart = (e, product) => {
-  //   e.stopPropation()
-  //   dispatch(addToCart(product))
-  // }
+  const getQuantity = (productId) => quantities[productId] || 1
+
+  const handleQuantityChange = (id, quantity) => {
+    setQuantities({
+      ...quantities,
+      [id]: quantity
+    })
+  }
+
+  const addProductToCart = (product) => {
+    const quantity = getQuantity(product.id)
+    console.log(quantity)
+    dispatch(addToCart(product, quantity))
+  }
 
   return (
     <Box sx={{ maxWidth: 1200, margin: 'auto', padding: 2 }}>
@@ -67,14 +85,52 @@ const ProductList = () => {
                   {product.price} RON
                 </Typography>
               </CardContent>
-              <CardActions>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  size="small"
+              <CardActions sx={{ justifyContent: 'space-between', px: 2 }}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1
+                  }}
                   onClick={(e) => e.stopPropagation()}>
-                  Add to Cart
-                </Button>
+                  <ButtonGroup size="small">
+                    <IconButton
+                      size="small"
+                      onClick={() => handleQuantityChange(product.id, getQuantity(product.id) - 1)}
+                      disabled={getQuantity(product.id) === 1}>
+                      <RemoveIcon />
+                    </IconButton>
+                    <TextField
+                      size="small"
+                      value={getQuantity(product.id)}
+                      onChange={(e) => handleQuantityChange(product.id, parseInt(e.target.value))}
+                      sx={{
+                        width: `${Math.max(50, getQuantity(product.id).toString().length * 20)}px`,
+                        transition: 'width 0.2s',
+                        textAlign: 'center'
+                      }}
+                      slotProps={{
+                        htmlInput: {
+                          maxLength: 4,
+                          style: { textAlign: 'center' }
+                        }
+                      }}
+                    />
+                    <IconButton
+                      size="small"
+                      onClick={() => handleQuantityChange(product.id, getQuantity(product.id) + 1)}
+                      disabled={getQuantity(product.id) >= 9999}>
+                      <AddIcon />
+                    </IconButton>
+                  </ButtonGroup>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    size="small"
+                    onClick={() => addProductToCart(product)}>
+                    Add
+                  </Button>
+                </Box>
               </CardActions>
             </Card>
           </Grid>
