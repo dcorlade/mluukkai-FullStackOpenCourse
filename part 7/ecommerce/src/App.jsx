@@ -117,8 +117,7 @@ const App = () => {
           path="edit-product/:id"
           element={user?.role === 'admin' ? <EditProductForm /> : <Navigate to="/" />}
         />
-        {/* <Route path="/users" element={<UserList />} />
-        <Route path="/users/:id" element={<User />} /> */}
+
         <Route path="/products/:id" element={<Product />} />
       </Routes>
     </Router>
