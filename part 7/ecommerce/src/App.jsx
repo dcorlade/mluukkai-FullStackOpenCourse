@@ -7,13 +7,14 @@ import { useDispatch, useSelector } from 'react-redux'
 import { initializeLoggedUser, loginUser, logoutUser } from './reducers/loggedUserReducer'
 import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom'
 import { initializeUsers } from './reducers/usersReducer'
-import { AppBar, Button, Toolbar } from '@mui/material'
+import { AppBar, Button, Grid2, IconButton, Toolbar } from '@mui/material'
 import ProductList from './components/ProductList'
 import { initializeProducts } from './reducers/productReducer'
 import Product from './components/Product'
 import AddProductForm from './components/AddProductForm'
 import EditProductForm from './components/EditProductForm'
 import Cart from './components/Cart'
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
 
 const App = () => {
   const user = useSelector(({ loggedUser }) => loggedUser)
@@ -102,9 +103,12 @@ const App = () => {
             Products
           </Button>
           {user && (
-            <Button color="inherit" component={Link} to="/cart">
-              Cart ({cart.length})
-            </Button>
+            <Grid2 display="flex" justifyContent={'center'} alignItems={'center'}>
+              <Button color="inherit" component={Link} to="/cart">
+                Cart
+                <ShoppingCartIcon sx={{ marginLeft: '5px', marginRight: '2px' }} />({cart.length})
+              </Button>
+            </Grid2>
           )}
           <div style={{ marginLeft: 'auto' }}>{user && logoutForm()}</div>
         </Toolbar>

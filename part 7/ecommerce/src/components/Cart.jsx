@@ -91,7 +91,7 @@ const Cart = () => {
                             handleQuantityChange(item.product.id, parseInt(e.target.value))
                           }
                           sx={{
-                            width: `${Math.max(50, item.quantity.toString().length * 20)}px`,
+                            width: '65px',
                             transition: 'width 0.2s',
                             textAlign: 'center'
                           }}
